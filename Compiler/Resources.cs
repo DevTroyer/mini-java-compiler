@@ -16,6 +16,13 @@ namespace Compiler
             periodt, quotet, numt, idt, eoft, unknownt
         };
 
+        public static List<Token> returnTypes = new List<Token>(3)
+        {
+            Token.intt,
+            Token.booleant,
+            Token.voidt
+        };
+
         // Global regular expressions
         public static Regex wordTokenRegex = new Regex("[A-Za-z]");
         public static Regex identifiedWordTokenRegex = new Regex("[0-9A-Za-z_]");

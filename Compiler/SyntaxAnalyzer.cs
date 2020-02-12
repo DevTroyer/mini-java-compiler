@@ -24,9 +24,9 @@ namespace Compiler
         /// The Match method for the Syntax Analyzer.
         /// </summary>
         /// <param name="tokenArgument"></param>
-        private void Match(Token tokenArgument)
+        private void Match(Token inputToken)
         {
-            if (token == tokenArgument)
+            if (token == inputToken)
             {
                 lexicalAnalyzer.GetNextToken();
             }
@@ -41,8 +41,8 @@ namespace Compiler
         /// </summary>
         public void Prog()
         {
-            MainClass();
             MoreClasses();
+            MainClass();
         }
 
         private void MainClass()
@@ -102,42 +102,108 @@ namespace Compiler
             {
                 Match(Token.finalt);
             }
-            if (token == Token.intt || token == Token.booleant || token == Token.voidt)
+            if (returnTypes.Contains(token))
             {
                 Type();
                 IdentifierList();
-                if (token == Token.assignopt)
+
+                switch(token)
                 {
-                    Match(Token.assignopt);
-                    Match(Token.)
+                    case Token.assignopt:
+                        Match(Token.assignopt);
+                        Match(Token.numt);
+                        Match(Token.semit);
+                        VariableDeclaration();
+                        break;
+                    case Token.semit:
+                        Match(Token.semit);
+                        VariableDeclaration();
+                        break;
                 }
-                Match(Token.semit);
-                VariableDeclaration();
             }
             else
             {
-                // Thorw an error if not the right type
+                // Throw an error if not the right return type
             }
         }
 
         private void Type()
         {
-            if (token == Token.intt)
+            switch (token)
             {
-                Match(Token.intt);
-            }
-            else if (token == Token.booleant)
-            {
-                Match(Token.booleant);
-            }
-            else if (token == Token.voidt)
-            {
-                Match(Token.voidt);
+                case Token.intt:
+                    Match(Token.intt);
+                    break;
+                case Token.booleant:
+                    Match(Token.booleant);
+                    break;
+                case Token.voidt:
+                    Match(Token.voidt);
+                    break;
             }
         }
+
+        private void IdentifierList()
+        {
+            Match(Token.idt);
+            if(token == Token.commat)
+            {
+                Match(Token.commat);
+                IdentifierList();
+            }
+        }
+
         private void MethodDeclaration()
         {
+            if(token == Token.publict)
+            {
+                Match(Token.publict);
+                if (returnTypes.Contains(token))
+                {
+                    Type();
+                    Match(Token.idt);
+                    Match(Token.lparentt);
+                    FormalList();
+                    Match(Token.rparentt);
+                    Match(Token.lcurlyt);
+                    VariableDeclaration();
+                    SequenceOfStatements();
+                    Match(Token.returnt);
+                    Expr();
+                    Match(Token.semit);
+                    Match(Token.rcurlyt);
+                    MethodDeclaration();
+                }
+            }
+        }
 
+        private void Expr()
+        {
+            // Implementation pending
+        }
+
+        private void FormalList()
+        {
+            if (returnTypes.Contains(token))
+            {
+                Type();
+                Match(Token.idt);
+                FormalRest();
+            }
+        }
+
+        private void FormalRest()
+        {
+            if (token == Token.commat)
+            {
+                Match(Token.commat);
+                if (returnTypes.Contains(token))
+                {
+                    Type();
+                    Match(Token.idt);
+                    FormalRest();
+                }
+            }
         }
     }
 }
