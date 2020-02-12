@@ -52,6 +52,7 @@ namespace Compiler
         /// </summary>
         private void StoreReservedWords()
         {
+            reservedWords.Add("final");
             reservedWords.Add("class");
             reservedWords.Add("public");
             reservedWords.Add("static");
@@ -343,6 +344,9 @@ namespace Compiler
         {
             switch (lexemes.ToString())
             {
+                case "final":
+                    token = Token.finalt;
+                    break;
                 case "class":
                     token = Token.classt;
                     break;

@@ -13,14 +13,17 @@ namespace Compiler
             }
             else
             {
-                LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(args[0]);
+                SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzer(args[0]);
 
-                Console.WriteLine("{0,-8}{1,-12}{2,-40}{3,-14}{4,-14}{5,-40}\n", "Line #:", "Token:", "Lexeme(s):", "Value:", "ValueR:", "Literal:");
+                syntaxAnalyzer.Prog();
 
-                while (Resources.token != Resources.Token.eoft)
+                if (Resources.token == Resources.Token.eoft)
                 {
-                    lexicalAnalyzer.GetNextToken();
-                    lexicalAnalyzer.DisplayToken();
+                    Console.WriteLine("Good job! You did it!");
+                }
+                else
+                {
+                    Console.WriteLine("Error - Unused tokens");
                 }
             }
         }

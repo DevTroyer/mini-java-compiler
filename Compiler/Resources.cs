@@ -10,8 +10,8 @@ namespace Compiler
         // Global enumerated date type that holds all of the tokens
         public enum Token
         {
-            classt, publict, statict, voidt, maint, Stringt, extendst, returnt, intt, booleant, ift,
-            elset, whilet, printlnt, lengtht, truet, falset, thist, newt, addopt, mulopt, assignopt,
+            finalt, classt, publict, statict, voidt, maint, Stringt, extendst, returnt, intt, booleant,
+            ift, elset, whilet, printlnt, lengtht, truet, falset, thist, newt, addopt, mulopt, assignopt,
             relopt, lparentt, rparentt, lcurlyt, rcurlyt, lbrackt, rbrackt, commat, literalt, semit, 
             periodt, quotet, numt, idt, eoft, unknownt
         };
