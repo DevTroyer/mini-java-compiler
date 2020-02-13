@@ -32,7 +32,7 @@ namespace Compiler
             }
             else
             {
-                Console.WriteLine("Error!");
+                ExceptionHandler.ThrowException(lineNumber, token);
             }
         }
 
@@ -54,7 +54,7 @@ namespace Compiler
             Match(Token.publict);
             Match(Token.statict);
             Match(Token.voidt);
-            Match(Token.idt);
+            Match(Token.maint);
             Match(Token.lparentt);
             Match(Token.Stringt);
             Match(Token.lbrackt);
