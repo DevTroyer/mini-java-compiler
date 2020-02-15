@@ -45,6 +45,9 @@ namespace Compiler
             MainClass();
         }
 
+        /// <summary>
+        /// The MainClass method for the Syntax Analyzer.
+        /// </summary>
         private void MainClass()
         {
             Match(Token.finalt);
@@ -67,11 +70,17 @@ namespace Compiler
             Match(Token.rcurlyt);
         }
 
+        /// <summary>
+        /// The SequenceOfStatements method for the Syntax Analyzer.
+        /// </summary>
         private void SequenceOfStatements()
         {
             // Implementation pending
         }
 
+        /// <summary>
+        /// The MoreClasses method for the Syntax Analyzer.
+        /// </summary>
         private void MoreClasses()
         {
             if (token == Token.classt)
@@ -81,6 +90,9 @@ namespace Compiler
             }
         }
 
+        /// <summary>
+        /// The ClassDeclaration method for the Syntax Analyzer.
+        /// </summary>
         private void ClassDeclaration()
         {
             Match(Token.classt);
@@ -96,6 +108,9 @@ namespace Compiler
             Match(Token.rcurlyt);
         }
 
+        /// <summary>
+        /// The VariableDeclaration method for the Syntax Analyzer.
+        /// </summary>
         private void VariableDeclaration()
         {
             if (token == Token.finalt)
@@ -127,6 +142,9 @@ namespace Compiler
             }
         }
 
+        /// <summary>
+        /// The Type method for the Syntax Analyzer.
+        /// </summary>
         private void Type()
         {
             switch (token)
@@ -143,6 +161,9 @@ namespace Compiler
             }
         }
 
+        /// <summary>
+        /// The IdentifierList method for the Syntax Analyzer.
+        /// </summary>
         private void IdentifierList()
         {
             Match(Token.idt);
@@ -153,6 +174,9 @@ namespace Compiler
             }
         }
 
+        /// <summary>
+        /// The MethodDeclaration method for the Syntax Analyzer.
+        /// </summary>
         private void MethodDeclaration()
         {
             if(token == Token.publict)
@@ -177,11 +201,17 @@ namespace Compiler
             }
         }
 
+        /// <summary>
+        /// The Expr method for the Syntax Analyzer.
+        /// </summary>
         private void Expr()
         {
             // Implementation pending
         }
 
+        /// <summary>
+        /// The FormalList method for the Syntax Analyzer.
+        /// </summary>
         private void FormalList()
         {
             if (returnTypes.Contains(token))
@@ -192,6 +222,9 @@ namespace Compiler
             }
         }
 
+        /// <summary>
+        /// The FormalRest method for the Syntax Analyzer.
+        /// </summary>
         private void FormalRest()
         {
             if (token == Token.commat)
