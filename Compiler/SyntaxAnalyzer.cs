@@ -32,7 +32,7 @@ namespace Compiler
             }
             else
             {
-                ExceptionHandler.ThrowException(lineNumber, token);
+                ExceptionHandler.ThrowException();
             }
         }
 
@@ -88,6 +88,10 @@ namespace Compiler
                 ClassDeclaration();
                 MoreClasses();
             }
+            else if(token == Token.idt)
+            {
+                ExceptionHandler.ThrowCustomException();
+            }
         }
 
         /// <summary>
@@ -138,7 +142,7 @@ namespace Compiler
             }
             else
             {
-                // Throw an error if not the right return type
+                ExceptionHandler.ThrowCustomException();
             }
         }
 
