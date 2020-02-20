@@ -4,22 +4,17 @@ namespace Compiler
 {
     class ExceptionHandler : Resources
     {
-        public static void ThrowException()
+        public static void ThrowException(Token expectedToken)
         {
             if(token != Token.eoft)
             {
-                Console.WriteLine($"Error - Line {lineNumber} - Expected {1}, found '{lexemes}'");
+                Console.WriteLine($"Error - Line {lineNumber} - Expected {expectedToken}, actual '{lexemes}'");
             }
-        }
-
-        private void CalculateExpectedLexemes()
-        {
-            // Implement
         }
 
         internal static void ThrowCustomException()
         {
-            // Implement
+            // Implement later
         }
     }
 }

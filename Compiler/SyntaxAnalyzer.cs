@@ -30,9 +30,10 @@ namespace Compiler
             {
                 lexicalAnalyzer.GetNextToken();
             }
-            else
+            else if(token != Token.eoft)
             {
-                ExceptionHandler.ThrowException();
+                ExceptionHandler.ThrowException(inputToken);
+                System.Environment.Exit(0);
             }
         }
 
@@ -121,7 +122,7 @@ namespace Compiler
             {
                 Match(Token.finalt);
             }
-            if (returnTypes.Contains(token))
+            if (Types.Contains(token))
             {
                 Type();
                 IdentifierList();
@@ -165,6 +166,25 @@ namespace Compiler
             }
         }
 
+        ///// <summary>
+        ///// The variable type method for the Syntax Analyzer.
+        ///// </summary>
+        //private void VariableType()
+        //{
+        //    switch (token)
+        //    {
+        //        case Token.intt:
+        //            Match(Token.intt);
+        //            break;
+        //        case Token.booleant:
+        //            Match(Token.booleant);
+        //            break;
+        //        case Token.voidt:
+        //            Match(Token.voidt);
+        //            break;
+        //    }
+        //}
+
         /// <summary>
         /// The IdentifierList method for the Syntax Analyzer.
         /// </summary>
@@ -186,7 +206,7 @@ namespace Compiler
             if(token == Token.publict)
             {
                 Match(Token.publict);
-                if (returnTypes.Contains(token))
+                if (Types.Contains(token))
                 {
                     Type();
                     Match(Token.idt);
@@ -218,7 +238,7 @@ namespace Compiler
         /// </summary>
         private void FormalList()
         {
-            if (returnTypes.Contains(token))
+            if (Types.Contains(token))
             {
                 Type();
                 Match(Token.idt);
@@ -234,7 +254,7 @@ namespace Compiler
             if (token == Token.commat)
             {
                 Match(Token.commat);
-                if (returnTypes.Contains(token))
+                if (Types.Contains(token))
                 {
                     Type();
                     Match(Token.idt);

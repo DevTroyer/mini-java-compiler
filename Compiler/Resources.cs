@@ -16,12 +16,18 @@ namespace Compiler
             periodt, quotet, numt, idt, eoft, unknownt
         };
 
-        public static List<Token> returnTypes = new List<Token>(3)
+        public static List<Token> Types = new List<Token>(3)
         {
             Token.intt,
             Token.booleant,
             Token.voidt
         };
+
+        //public static List<Token> variableTypes = new List<Token>(2)
+        //{
+        //    Token.intt,
+        //    Token.booleant
+        //};
 
         // Global regular expressions
         public static Regex wordTokenRegex = new Regex("[A-Za-z]");
