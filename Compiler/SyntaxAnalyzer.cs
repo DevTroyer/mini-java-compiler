@@ -33,7 +33,6 @@ namespace Compiler
             else if(token != Token.eoft)
             {
                 ExceptionHandler.ThrowException(inputToken);
-                System.Environment.Exit(0);
             }
         }
 
@@ -53,7 +52,7 @@ namespace Compiler
         {
             Match(Token.finalt);
             Match(Token.classt);
-            Match(Token.idt);
+            Match(Token.maint);
             Match(Token.lcurlyt);
             Match(Token.publict);
             Match(Token.statict);
@@ -89,9 +88,9 @@ namespace Compiler
                 ClassDeclaration();
                 MoreClasses();
             }
-            else if(token == Token.idt)
+            else if(token != Token.finalt)
             {
-                ExceptionHandler.ThrowCustomException();
+                ExceptionHandler.ThrowException(Token.classt);
             }
         }
 
@@ -121,29 +120,30 @@ namespace Compiler
             if (token == Token.finalt)
             {
                 Match(Token.finalt);
+                if (Types.Contains(token))
+                {
+                    Type();
+                    Match(Token.idt);
+                    Match(Token.assignopt);
+                    Match(Token.numt);
+                    Match(Token.semit);
+                    VariableDeclaration();
+                }
+                else
+                {
+                    ExceptionHandler.ThrowCustomException("return type");
+                }
             }
-            if (Types.Contains(token))
+            else if (Types.Contains(token))
             {
                 Type();
                 IdentifierList();
-
-                switch(token)
-                {
-                    case Token.assignopt:
-                        Match(Token.assignopt);
-                        Match(Token.numt);
-                        Match(Token.semit);
-                        VariableDeclaration();
-                        break;
-                    case Token.semit:
-                        Match(Token.semit);
-                        VariableDeclaration();
-                        break;
-                }
+                Match(Token.semit);
+                VariableDeclaration();
             }
-            else
+            else if (token != Token.rcurlyt && token != Token.publict && token != Token.returnt)
             {
-                ExceptionHandler.ThrowCustomException();
+                ExceptionHandler.ThrowCustomException("variable or method declaration");
             }
         }
 
@@ -167,9 +167,10 @@ namespace Compiler
         }
 
         ///// <summary>
-        ///// The variable type method for the Syntax Analyzer.
+        ///// This is a method to allow void to be used ONLY for methods.
+        ///// Need to await further instructions.
         ///// </summary>
-        //private void VariableType()
+        //private void MethodReturnType()
         //{
         //    switch (token)
         //    {
@@ -195,6 +196,14 @@ namespace Compiler
             {
                 Match(Token.commat);
                 IdentifierList();
+            }
+            else if(token == Token.idt)
+            {
+                ExceptionHandler.ThrowException(Token.commat);
+            }
+            else if (token != Token.semit)
+            {
+                ExceptionHandler.ThrowException(Token.semit);
             }
         }
 
@@ -222,6 +231,14 @@ namespace Compiler
                     Match(Token.rcurlyt);
                     MethodDeclaration();
                 }
+                else
+                {
+                    ExceptionHandler.ThrowCustomException("return type");
+                }
+            }
+            else if(token != Token.rcurlyt)
+            {
+                ExceptionHandler.ThrowException(Token.publict);
             }
         }
 
@@ -260,6 +277,10 @@ namespace Compiler
                     Match(Token.idt);
                     FormalRest();
                 }
+            }
+            else if(token != Token.rparentt)
+            {
+                ExceptionHandler.ThrowException(Token.commat);
             }
         }
     }

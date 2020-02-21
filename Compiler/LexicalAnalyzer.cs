@@ -268,7 +268,6 @@ namespace Compiler
         private void ProcessLiteralToken()
         {
             token = Token.quotet;
-            DisplayToken();
             ClearLexemes();
             while (character != '"' && character != '\n' && !streamReader.EndOfStream)
             {
@@ -286,7 +285,6 @@ namespace Compiler
             {
                 token = Token.literalt;
                 literal = lexemes.ToString();
-                DisplayToken();
                 ClearLexemes();
                 literal = null;
                 AppendLexeme();

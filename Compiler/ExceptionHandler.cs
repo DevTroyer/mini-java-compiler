@@ -9,12 +9,14 @@ namespace Compiler
             if(token != Token.eoft)
             {
                 Console.WriteLine($"Error - Line {lineNumber} - Expected {expectedToken}, actual '{lexemes}'");
+                System.Environment.Exit(0);
             }
         }
 
-        internal static void ThrowCustomException()
+        public static void ThrowCustomException(string description)
         {
-            // Implement later
+            Console.WriteLine($"Error - Line {lineNumber} - Expected {description}, actual '{lexemes}'");
+            System.Environment.Exit(0);
         }
     }
 }
