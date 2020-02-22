@@ -1,6 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Tucker Troyer
+// Compiler Construction
+// Assignment 3 - Syntax Analyzer
+// Dr. Hamer
+// 2/21/2020
 
 namespace Compiler
 {
