@@ -15,6 +15,9 @@ namespace Compiler
         public static Regex numTokenRegex = new Regex("[0-9]");
         public static Regex singleTokenRegex = new Regex(@"[-+*/(){},;.\[\]]");
         public static Regex doubleTokenRegex = new Regex(@"[=!<>|&]");
+        public static Regex relationalOpDeciderRegex = new Regex("[<>!=]");
+        public static Regex inclusionOpDeciderRegex = new Regex("[|&]");
+        public static Regex numDeciderRegex = new Regex("[0-9.]");
 
         #endregion
 

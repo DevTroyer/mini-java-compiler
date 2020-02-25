@@ -434,9 +434,7 @@ namespace Compiler
         /// </summary>
         private void ProcessDoubleToken()
         {
-            Regex reg1 = new Regex("[<>!=]");
-            Regex reg2 = new Regex("[|&]");
-            if (reg1.IsMatch(lexemes[0].ToString()))
+            if (relationalOpDeciderRegex.IsMatch(lexemes[0].ToString()))
             {
                 if(character != '=')
                 {
@@ -454,7 +452,7 @@ namespace Compiler
                     GetNextCharacter();
                 }
             }
-            else if (reg2.IsMatch(lexemes[0].ToString()))
+            else if (inclusionOpDeciderRegex.IsMatch(lexemes[0].ToString()))
             {
                 if (lexemes[0].ToString() == "&" && character == '&')
                 {
@@ -480,8 +478,7 @@ namespace Compiler
         /// </summary>
         private void ProcessNumToken()
         {
-            Regex regexxx = new Regex("[0-9.]");
-            while (regexxx.IsMatch(character.ToString()))
+            while (numDeciderRegex.IsMatch(character.ToString()))
             {
                 AppendLexeme();
                 GetNextCharacter();
