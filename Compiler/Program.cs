@@ -23,7 +23,7 @@ namespace Compiler
                 }
                 else
                 {
-                    Console.WriteLine("Error - Unused tokens");
+                    Console.WriteLine($"Error - Line {Resources.lineNumber} - Unused tokens");
                 }
             }
         }

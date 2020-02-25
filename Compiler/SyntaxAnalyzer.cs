@@ -54,7 +54,7 @@ namespace Compiler
         {
             Match(Token.finalt);
             Match(Token.classt);
-            Match(Token.maint);
+            Match(Token.idt);
             Match(Token.lcurlyt);
             Match(Token.publict);
             Match(Token.statict);
