@@ -42,12 +42,6 @@ namespace Compiler
             periodt, quotet, numt, idt, eoft, unknownt
         };
 
-        //public static List<Token> variableTypes = new List<Token>(2)
-        //{
-        //    Token.intt,
-        //    Token.booleant
-        //};
-
         // Global variables
         public static List<string> reservedWords = new List<string>(19);
         public static StreamReader streamReader;

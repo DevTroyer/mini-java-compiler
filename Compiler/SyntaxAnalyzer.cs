@@ -168,26 +168,6 @@ namespace Compiler
             }
         }
 
-        ///// <summary>
-        ///// This is a method to allow void to be used ONLY for methods.
-        ///// Need to await further instructions.
-        ///// </summary>
-        //private void MethodReturnType()
-        //{
-        //    switch (token)
-        //    {
-        //        case Token.intt:
-        //            Match(Token.intt);
-        //            break;
-        //        case Token.booleant:
-        //            Match(Token.booleant);
-        //            break;
-        //        case Token.voidt:
-        //            Match(Token.voidt);
-        //            break;
-        //    }
-        //}
-
         /// <summary>
         /// The IdentifierList method for the Syntax Analyzer.
         /// </summary>
