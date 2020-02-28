@@ -1,0 +1,7 @@
+﻿
+namespace Compiler
+{
+    class HashTable
+    {
+    }
+}
