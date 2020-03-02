@@ -1,14 +1,22 @@
-﻿
+﻿// Tucker Troyer
+// Compiler Construction
+// Assignment 4 - Symbol Table
+// Dr. Hamer
+// 3/6/2020
+
+using System.Collections;
+using System.Collections.Generic;
+
 namespace Compiler
 {
-    class SymbolTable : Resources
+    class SymbolTable : Resources, ISymbolTable
     {
         /// <summary>
         /// Inserts the lexemes, token, and depth into a record in the symbol table.
         /// </summary>
         public void insert(string lexemes, Token token, int depth)
         {
-
+            
         }
 
         /// <summary>
