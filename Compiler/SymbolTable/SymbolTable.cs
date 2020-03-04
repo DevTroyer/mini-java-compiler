@@ -4,19 +4,30 @@
 // Dr. Hamer
 // 3/6/2020
 
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Compiler
 {
-    class SymbolTable : Resources, ISymbolTable
+    public enum VarType { booleanType, floatType, intType, voidType };
+    public enum EntryType { classEntry, methodEntry, varEntry, constEntry };
+    public enum ParameterPassingMode { passByValue, passByReference };
+
+    public class SymbolTable : Resources
     {
+        const int tableSize = 211;
+        public List<ISymbolTableEntry>[] symbolTable { get; set; }
+
+        public SymbolTable()
+        {
+            symbolTable = new List<ISymbolTableEntry>[tableSize];
+        }
+
         /// <summary>
         /// Inserts the lexemes, token, and depth into a record in the symbol table.
         /// </summary>
         public void insert(string lexemes, Token token, int depth)
         {
-            
+
         }
 
         /// <summary>
