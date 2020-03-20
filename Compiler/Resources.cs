@@ -33,12 +33,22 @@ namespace Compiler
 
         #endregion
 
+        #region Symbol Table Resources
+
+        public int depth;
+        public enum VarType { booleanType, floatType, intType, voidType };
+        public enum EntryType { None, classEntry, methodEntry, varEntry, constEntry };
+        public enum ConstType { intType, floatType }
+        public enum ParameterPassingMode { passByValue, passByReference };
+
+        #endregion
+
         // Global enumerated date type that holds all of the tokens
         public enum Token
         {
             finalt, classt, publict, statict, voidt, maint, Stringt, extendst, returnt, intt, booleant,
             ift, elset, whilet, printlnt, lengtht, truet, falset, thist, newt, addopt, mulopt, assignopt,
-            relopt, lparentt, rparentt, lcurlyt, rcurlyt, lbrackt, rbrackt, commat, literalt, semit, 
+            relopt, lparentt, rparentt, lcurlyt, rcurlyt, lbrackt, rbrackt, commat, literalt, semit,
             periodt, quotet, numt, idt, eoft, unknownt
         };
 

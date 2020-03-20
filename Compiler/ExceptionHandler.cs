@@ -10,7 +10,7 @@ namespace Compiler
         /// <param name="expectedToken"></param>
         public static void ThrowException(Token expectedToken)
         {
-            if(token != Token.eoft)
+            if (token != Token.eoft)
             {
                 Console.WriteLine($"Error - Line {lineNumber} - Expected {expectedToken}, actual '{lexemes}'");
                 System.Environment.Exit(0);
@@ -24,6 +24,16 @@ namespace Compiler
         public static void ThrowCustomException(string description)
         {
             Console.WriteLine($"Error - Line {lineNumber} - Expected {description}, actual '{lexemes}'");
+            System.Environment.Exit(0);
+        }
+
+        /// <summary>
+        /// Method to throw a lexeme exception message.
+        /// </summary>
+        /// <param name="lexeme"></param>
+        public static void ThrowLexemeException(string lexeme)
+        {
+            Console.WriteLine($"Error - '{lexeme}' does not exist in the current context");
             System.Environment.Exit(0);
         }
     }

@@ -10,7 +10,18 @@ namespace Compiler
         public int Depth { get; set; }
         public EntryType TypeOfEntry { get; set; }
         public int SizeOfLocalVariables { get; set; }
-        public List<string> ListOfVariableNames { get; set; }
-        public List<string> ListOfMethodNames { get; set; }
+        public List<string> ListOfVariableNames { get; set; } = new List<string>();
+        public List<string> ListOfMethodNames { get; set; } = new List<string>();
+
+        public static implicit operator Class(SymbolTableEntry symbolTableEntry)
+        {
+            return new Class()
+            {
+                Lexeme = symbolTableEntry.Lexeme,
+                Token = symbolTableEntry.Token,
+                Depth = symbolTableEntry.Depth,
+                TypeOfEntry = symbolTableEntry.TypeOfEntry
+            };
+        }
     }
 }

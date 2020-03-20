@@ -12,14 +12,18 @@ namespace Compiler
         public int SizeOfLocalVariables { get; set; }
         public int NumOfParams { get; set; }
         public VarType ReturnType { get; set; }
-        public List<ParameterPassingMode> ParameterPassingMode { get; set; }
-        public List<VarType> ParameterType { get; set; }
+        public List<ParameterPassingMode> ParamPassingMode { get; set; } = new List<ParameterPassingMode>();
+        public List<VarType> ParameterType { get; set; } = new List<VarType>();
 
-        public Method(Token _token, string _lexeme, int _depth)
+        public static implicit operator Method(SymbolTableEntry symbolTableEntry)
         {
-            Token = _token;
-            Lexeme = _lexeme;
-            Depth = _depth;
+            return new Method()
+            {
+                Lexeme = symbolTableEntry.Lexeme,
+                Token = symbolTableEntry.Token,
+                Depth = symbolTableEntry.Depth,
+                TypeOfEntry = symbolTableEntry.TypeOfEntry
+            };
         }
     }
 }

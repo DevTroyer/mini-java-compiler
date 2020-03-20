@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static Compiler.Resources;
+﻿using static Compiler.Resources;
 
 namespace Compiler
 {
@@ -12,11 +9,12 @@ namespace Compiler
         public int Depth { get; set; }
         public EntryType TypeOfEntry { get; set; }
 
-        public SymbolTableEntry(Token _token, string _lexeme, int _depth)
+        public SymbolTableEntry(string _lexeme, Token _token, int _depth, EntryType _typeOfEntry)
         {
             Token = _token;
             Lexeme = _lexeme;
             Depth = _depth;
+            TypeOfEntry = _typeOfEntry;
         }
     }
 }

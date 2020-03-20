@@ -12,11 +12,15 @@ namespace Compiler
         public int Offset { get; set; }
         public int Size { get; set; }
 
-        public Variable(Token _token, string _lexeme, int _depth)
+        public static implicit operator Variable(SymbolTableEntry symbolTableEntry)
         {
-            Token = _token;
-            Lexeme = _lexeme;
-            Depth = _depth;
+            return new Variable()
+            {
+                Lexeme = symbolTableEntry.Lexeme,
+                Token = symbolTableEntry.Token,
+                Depth = symbolTableEntry.Depth,
+                TypeOfEntry = symbolTableEntry.TypeOfEntry
+            };
         }
     }
 }
