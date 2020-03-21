@@ -21,6 +21,7 @@ namespace Compiler
         public SymbolTable()
         {
             symbolTable = new List<ISymbolTableEntry>[tableSize];
+            depth = 0;
 
             for (int i = 0; i < tableSize; i++)
             {
@@ -105,6 +106,12 @@ namespace Compiler
         private int Hash(string lexeme)
         {
             return Math.Abs(lexeme.GetHashCode()) % tableSize;
+        }
+
+        public void ProcessBaseEntry(SymbolTable symbolTable, EntryType entryType)
+        {
+            SymbolTableEntry entry = new SymbolTableEntry(lexemes.ToString(), Token.idt, depth, entryType);
+            symbolTable.Insert(entry);
         }
     }
 }

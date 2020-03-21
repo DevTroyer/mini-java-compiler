@@ -9,6 +9,7 @@ namespace Compiler
     class SyntaxAnalyzer : Resources
     {
         LexicalAnalyzer lexicalAnalyzer { get; set; }
+        SymbolTable symbolTable { get; set; }
 
         /// <summary>
         /// Constructor for the Syntax Analyzer class.
@@ -17,6 +18,7 @@ namespace Compiler
         public SyntaxAnalyzer(string commandLineFileName)
         {
             lexicalAnalyzer = new LexicalAnalyzer(commandLineFileName);
+            symbolTable = new SymbolTable();
 
             // Prime the parser :O
             lexicalAnalyzer.GetNextToken();

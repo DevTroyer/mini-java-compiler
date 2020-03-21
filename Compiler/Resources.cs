@@ -35,7 +35,8 @@ namespace Compiler
 
         #region Symbol Table Resources
 
-        public int depth;
+        public static int depth;
+
         public enum VarType { booleanType, floatType, intType, voidType };
         public enum EntryType { None, classEntry, methodEntry, varEntry, constEntry };
         public enum ConstType { intType, floatType }
