@@ -52,11 +52,7 @@ namespace Compiler
         /// </summary>
         public ISymbolTableEntry Lookup(string lexeme)
         {
-            int hashIndex = Hash(lexeme);
-
-            ISymbolTableEntry lookedUpEntry = symbolTable[hashIndex].FirstOrDefault(entry => entry.Lexeme == lexeme);
-
-            return lookedUpEntry;
+            return symbolTable[Hash(lexeme)].FirstOrDefault(entry => entry.Lexeme == lexeme);
         }
 
         /// <summary>
@@ -107,12 +103,13 @@ namespace Compiler
         /// Creates a baseline table entry and inserts it into the symbol table.
         /// </summary>
         /// <param name="entryType"></param>
-        public void CreateTableEntry(EntryType entryType)
+        public ISymbolTableEntry CreateTableEntry(EntryType entryType)
         {
             SymbolTableEntry entry = new SymbolTableEntry(lexemes.ToString(), Token.idt, depth, entryType);
             CheckDuplicates();
-
             Insert(entry);
+
+            return entry;
         }
 
         /// <summary>
@@ -129,6 +126,49 @@ namespace Compiler
             {
                 ExceptionHandler.ThrowDuplicateEntryException(lexemes.ToString());
             }
+        }
+
+        /// <summary>
+        /// Method that converts a table entry to a class entry.
+        /// </summary>
+        /// <param name="tableEntry"></param>
+        public void ConvertEntryToClassEntry(ISymbolTableEntry tableEntry)
+        {
+            Class entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            entry.SizeOfLocalVariables = sizeOfLocalVariables;
+            entry.ListOfVariableNames = listOfVariableNames;
+            entry.ListOfMethodNames = listOfMethodNames;
+            Insert(entry);
+        }
+
+        /// <summary>
+        /// Method that converts a table entry to a const entry.
+        /// </summary>
+        /// <param name="tableEntry"></param>
+        public void ConvertEntryToConstEntry(ISymbolTableEntry tableEntry)
+        {
+            //Constant entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            //Insert(entry);
+        }
+
+        /// <summary>
+        /// Method that converts a table entry to a var entry.
+        /// </summary>
+        /// <param name="tableEntry"></param>
+        public void ConvertEntryToVarEntry(ISymbolTableEntry tableEntry)
+        {
+            Variable entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            Insert(entry);
+        }
+
+        /// <summary>
+        /// Method that converts a table entry to a method entry.
+        /// </summary>
+        /// <param name="tableEntry"></param>
+        public void ConvertEntryToMethodEntry(ISymbolTableEntry tableEntry)
+        {
+            Method entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            Insert(entry);
         }
     }
 }

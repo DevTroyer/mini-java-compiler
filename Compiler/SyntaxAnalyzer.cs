@@ -109,7 +109,7 @@ namespace Compiler
         {
             Match(Token.classt);
 
-            symbolTable.CreateTableEntry(EntryType.classEntry);
+            ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.classEntry);
 
             Match(Token.idt);
             if (token == Token.extendst)
@@ -122,6 +122,8 @@ namespace Compiler
             VariableDeclaration();
             MethodDeclaration();
             Match(Token.rcurlyt);
+
+            symbolTable.ConvertEntryToClassEntry(entry);
             depth--;
         }
 
@@ -168,15 +170,19 @@ namespace Compiler
             switch (token)
             {
                 case Token.intt:
+                    dataType = DataType.intType;
                     Match(Token.intt);
                     break;
                 case Token.booleant:
+                    dataType = DataType.booleanType;
                     Match(Token.booleant);
                     break;
                 case Token.voidt:
+                    dataType = DataType.voidType;
                     Match(Token.voidt);
                     break;
                 case Token.floatt:
+                    dataType = DataType.floatType;
                     Match(Token.floatt);
                     break;
             }

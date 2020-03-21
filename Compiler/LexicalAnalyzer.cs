@@ -60,6 +60,7 @@ namespace Compiler
             reservedWords.Add("extends");
             reservedWords.Add("return");
             reservedWords.Add("int");
+            reservedWords.Add("float");
             reservedWords.Add("boolean");
             reservedWords.Add("if");
             reservedWords.Add("else");

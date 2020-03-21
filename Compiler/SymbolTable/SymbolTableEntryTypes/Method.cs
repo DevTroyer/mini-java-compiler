@@ -11,9 +11,9 @@ namespace Compiler
         public EntryType TypeOfEntry { get; set; }
         public int SizeOfLocalVariables { get; set; }
         public int NumOfParams { get; set; }
-        public VarType ReturnType { get; set; }
+        public DataType ReturnType { get; set; }
         public List<ParameterPassingMode> ParamPassingMode { get; set; } = new List<ParameterPassingMode>();
-        public List<VarType> ParameterType { get; set; } = new List<VarType>();
+        public List<DataType> ParameterType { get; set; } = new List<DataType>();
 
         public static implicit operator Method(SymbolTableEntry symbolTableEntry)
         {

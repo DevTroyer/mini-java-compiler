@@ -36,12 +36,18 @@ namespace Compiler
 
         #region Symbol Table Resources
 
+        // Global
         public static int depth;
+        public static DataType dataType;
 
-        public enum VarType { booleanType, floatType, intType, voidType };
+        public enum DataType { booleanType, floatType, intType, voidType };
         public enum EntryType { classEntry, methodEntry, varEntry, constEntry };
-        public enum ConstType { intType, floatType }
         public enum ParameterPassingMode { passByValue, passByReference };
+
+        // Class-specific
+        public static int sizeOfLocalVariables;
+        public static List<string> listOfVariableNames;
+        public static List<string> listOfMethodNames;
 
         #endregion
 
@@ -55,7 +61,7 @@ namespace Compiler
         };
 
         // Global variables
-        public static List<string> reservedWords = new List<string>(19);
+        public static List<string> reservedWords = new List<string>(20);
         public static StreamReader streamReader;
         public static int lineNumber;
         public static Token token;
