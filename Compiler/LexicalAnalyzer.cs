@@ -370,6 +370,9 @@ namespace Compiler
                 case "int":
                     token = Token.intt;
                     break;
+                case "float":
+                    token = Token.floatt;
+                    break;
                 case "boolean":
                     token = Token.booleant;
                     break;

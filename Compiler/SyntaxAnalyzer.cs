@@ -108,6 +108,9 @@ namespace Compiler
         private void ClassDeclaration()
         {
             Match(Token.classt);
+
+            symbolTable.CreateTableEntry(EntryType.classEntry);
+
             Match(Token.idt);
             if (token == Token.extendst)
             {
@@ -172,6 +175,9 @@ namespace Compiler
                     break;
                 case Token.voidt:
                     Match(Token.voidt);
+                    break;
+                case Token.floatt:
+                    Match(Token.floatt);
                     break;
             }
         }

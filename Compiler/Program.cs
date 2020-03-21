@@ -82,13 +82,13 @@ namespace Compiler
 
                 syntaxAnalyzer.Prog();
 
-                if (Resources.token == Resources.Token.eoft)
+                if (token == Token.eoft)
                 {
                     Console.WriteLine("Good job! You did it!");
                 }
                 else
                 {
-                    Console.WriteLine($"Error - Line {Resources.lineNumber} - Unused tokens");
+                    ExceptionHandler.ThrowUnusedTokensException();
                 }
             }
         }

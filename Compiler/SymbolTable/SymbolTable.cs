@@ -54,14 +54,9 @@ namespace Compiler
         {
             int hashIndex = Hash(lexeme);
 
-            ISymbolTableEntry entryFoundInSymbolTable = symbolTable[hashIndex].FirstOrDefault(entry => entry.Lexeme == lexeme);
+            ISymbolTableEntry lookedUpEntry = symbolTable[hashIndex].FirstOrDefault(entry => entry.Lexeme == lexeme);
 
-            if (entryFoundInSymbolTable == null)
-            {
-                ExceptionHandler.ThrowLexemeException(lexeme);
-            }
-
-            return entryFoundInSymbolTable;
+            return lookedUpEntry;
         }
 
         /// <summary>
@@ -108,10 +103,32 @@ namespace Compiler
             return Math.Abs(lexeme.GetHashCode()) % tableSize;
         }
 
-        public void ProcessBaseEntry(SymbolTable symbolTable, EntryType entryType)
+        /// <summary>
+        /// Creates a baseline table entry and inserts it into the symbol table.
+        /// </summary>
+        /// <param name="entryType"></param>
+        public void CreateTableEntry(EntryType entryType)
         {
             SymbolTableEntry entry = new SymbolTableEntry(lexemes.ToString(), Token.idt, depth, entryType);
-            symbolTable.Insert(entry);
+            CheckDuplicates();
+
+            Insert(entry);
+        }
+
+        /// <summary>
+        /// Checks the symbol table for a duplicate entry at the same depth.
+        /// </summary>
+        /// <returns></returns>
+        private void CheckDuplicates()
+        {
+            int hashIndex = Hash(lexemes.ToString());
+
+            ISymbolTableEntry duplicateEntryFound = symbolTable[hashIndex].FirstOrDefault(duplicate => duplicate.Lexeme == lexemes.ToString() && duplicate.Depth == depth);
+
+            if (duplicateEntryFound != null)
+            {
+                ExceptionHandler.ThrowDuplicateEntryException(lexemes.ToString());
+            }
         }
     }
 }

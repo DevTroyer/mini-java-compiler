@@ -28,12 +28,21 @@ namespace Compiler
         }
 
         /// <summary>
-        /// Method to throw a lexeme exception message.
+        /// Method to throw a duplicate entry exception.
         /// </summary>
         /// <param name="lexeme"></param>
-        public static void ThrowLexemeException(string lexeme)
+        public static void ThrowDuplicateEntryException(string lexeme)
         {
-            Console.WriteLine($"Error - '{lexeme}' does not exist in the current context");
+            Console.WriteLine($"Error - Line {lineNumber} - '{lexeme}' already exists in the current context");
+            System.Environment.Exit(0);
+        }
+
+        /// <summary>
+        /// Method to throw an unused tokens exception.
+        /// </summary>
+        public static void ThrowUnusedTokensException()
+        {
+            Console.WriteLine($"Error - Line {lineNumber} - Unused tokens");
             System.Environment.Exit(0);
         }
     }
