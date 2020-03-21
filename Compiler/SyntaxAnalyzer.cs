@@ -58,11 +58,13 @@ namespace Compiler
             Match(Token.classt);
             Match(Token.idt);
             Match(Token.lcurlyt);
+            depth++;
             Match(Token.publict);
             Match(Token.statict);
             Match(Token.voidt);
             Match(Token.maint);
             Match(Token.lparentt);
+            depth++;
             Match(Token.Stringt);
             Match(Token.lbrackt);
             Match(Token.rbrackt);
@@ -71,7 +73,9 @@ namespace Compiler
             Match(Token.lcurlyt);
             SequenceOfStatements();
             Match(Token.rcurlyt);
+            depth--;
             Match(Token.rcurlyt);
+            depth--;
         }
 
         /// <summary>
@@ -111,9 +115,11 @@ namespace Compiler
                 Match(Token.idt);
             }
             Match(Token.lcurlyt);
+            depth++;
             VariableDeclaration();
             MethodDeclaration();
             Match(Token.rcurlyt);
+            depth--;
         }
 
         /// <summary>
@@ -204,6 +210,7 @@ namespace Compiler
                     Type();
                     Match(Token.idt);
                     Match(Token.lparentt);
+                    depth++;
                     FormalList();
                     Match(Token.rparentt);
                     Match(Token.lcurlyt);
@@ -213,6 +220,7 @@ namespace Compiler
                     Expr();
                     Match(Token.semit);
                     Match(Token.rcurlyt);
+                    depth--;
                     MethodDeclaration();
                 }
                 else
