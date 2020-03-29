@@ -84,7 +84,8 @@ namespace Compiler
                     {
                         if (entry.Depth == depth)
                         {
-                            Console.WriteLine(entry.Lexeme);
+                            Console.WriteLine($"Lexeme: {entry.Lexeme}");
+                            Console.WriteLine($"Type of Entry: {entry.TypeOfEntry}");
                         }
                     }
                 }
@@ -121,10 +122,10 @@ namespace Compiler
         {
             ISymbolTableEntry duplicateEntryFound = symbolTable[Hash(lexemes.ToString())].FirstOrDefault(duplicate => duplicate.Lexeme == lexemes.ToString() && duplicate.Depth == depth);
 
-            if (duplicateEntryFound != null)
-            {
-                ExceptionHandler.ThrowDuplicateEntryException(lexemes.ToString());
-            }
+            //if (duplicateEntryFound != null)
+            //{
+            //    ExceptionHandler.ThrowDuplicateEntryException(lexemes.ToString());
+            //}
         }
 
         /// <summary>
@@ -138,7 +139,6 @@ namespace Compiler
             entry.ListOfVariableNames = listOfVariableNames;
             entry.ListOfMethodNames = listOfMethodNames;
             Insert(entry);
-            DisplayClassEntry(entry);
         }
 
         /// <summary>
@@ -151,7 +151,6 @@ namespace Compiler
             entry.TypeOfConst = dataType;
             entry.Offset = offset;
             Insert(entry);
-            DisplayConstEntry(entry);
         }
 
         /// <summary>
@@ -165,7 +164,6 @@ namespace Compiler
             entry.Offset = offset;
             entry.Size = size;
             Insert(entry);
-            DisplayVariableEntry(entry);
         }
 
         /// <summary>
@@ -180,8 +178,9 @@ namespace Compiler
             entry.ReturnType = returnType;
             entry.ParameterType = parameterType;
             Insert(entry);
-            DisplayMethodEntry(entry);
         }
+
+        #region Testing Purposes
 
         private void DisplayVariableEntry(Variable entry)
         {
@@ -243,5 +242,7 @@ namespace Compiler
             Console.WriteLine();
             Console.WriteLine();
         }
+
+#endregion
     }
 }

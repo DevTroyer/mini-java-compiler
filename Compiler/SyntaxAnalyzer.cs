@@ -77,6 +77,8 @@ namespace Compiler
             Match(Token.lcurlyt);
             SequenceOfStatements();
             Match(Token.rcurlyt);
+            symbolTable.WriteTable(depth);
+            symbolTable.DeleteDepth(depth);
             depth--;
             Match(Token.rcurlyt);
 
@@ -84,6 +86,8 @@ namespace Compiler
             sizeOfLocalVariables = 0;
             listOfVariableNames.Clear();
             listOfMethodNames.Clear();
+            symbolTable.WriteTable(depth);
+            symbolTable.DeleteDepth(depth);
             depth--;
         }
 
@@ -138,6 +142,8 @@ namespace Compiler
             sizeOfLocalVariables = 0;
             listOfVariableNames.Clear();
             listOfMethodNames.Clear();
+            symbolTable.WriteTable(depth);
+            symbolTable.DeleteDepth(depth);
             depth--;
         }
 
@@ -289,6 +295,8 @@ namespace Compiler
                     numOfParameters = 0;
                     sizeOfLocalMethodVariables = 0;
 
+                    symbolTable.WriteTable(depth);
+                    symbolTable.DeleteDepth(depth);
                     depth--;
                     MethodDeclaration();
                 }
