@@ -47,6 +47,7 @@ namespace Compiler
         {
             MoreClasses();
             MainClass();
+            symbolTable.WriteTable(0);
         }
 
         /// <summary>
@@ -56,6 +57,9 @@ namespace Compiler
         {
             Match(Token.finalt);
             Match(Token.classt);
+
+            ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.classEntry);
+
             Match(Token.idt);
             Match(Token.lcurlyt);
             depth++;
@@ -75,6 +79,11 @@ namespace Compiler
             Match(Token.rcurlyt);
             depth--;
             Match(Token.rcurlyt);
+
+            symbolTable.ConvertEntryToClassEntry(entry);
+            sizeOfLocalVariables = 0;
+            listOfVariableNames.Clear();
+            listOfMethodNames.Clear();
             depth--;
         }
 
@@ -110,6 +119,7 @@ namespace Compiler
             Match(Token.classt);
 
             ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.classEntry);
+            context = EntryType.classEntry;
 
             Match(Token.idt);
             if (token == Token.extendst)
@@ -120,10 +130,14 @@ namespace Compiler
             Match(Token.lcurlyt);
             depth++;
             VariableDeclaration();
+            offset = 0;
             MethodDeclaration();
             Match(Token.rcurlyt);
 
             symbolTable.ConvertEntryToClassEntry(entry);
+            sizeOfLocalVariables = 0;
+            listOfVariableNames.Clear();
+            listOfMethodNames.Clear();
             depth--;
         }
 
@@ -138,6 +152,20 @@ namespace Compiler
                 if (Types.Contains(token))
                 {
                     Type();
+
+                    ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.constEntry);
+                    if(context == EntryType.classEntry)
+                    {
+                        listOfVariableNames.Add(lexemes.ToString());
+                        sizeOfLocalVariables += size;
+                    }
+                    else
+                    {
+                        sizeOfLocalMethodVariables += size;
+                    }
+                    symbolTable.ConvertEntryToConstEntry(entry);
+                    offset += (int)dataType;
+
                     Match(Token.idt);
                     Match(Token.assignopt);
                     Match(Token.numt);
@@ -171,18 +199,22 @@ namespace Compiler
             {
                 case Token.intt:
                     dataType = DataType.intType;
+                    size = 2;
                     Match(Token.intt);
                     break;
                 case Token.booleant:
                     dataType = DataType.booleanType;
+                    size = 1;
                     Match(Token.booleant);
                     break;
                 case Token.voidt:
                     dataType = DataType.voidType;
+                    size = 0;
                     Match(Token.voidt);
                     break;
                 case Token.floatt:
                     dataType = DataType.floatType;
+                    size = 4;
                     Match(Token.floatt);
                     break;
             }
@@ -193,7 +225,21 @@ namespace Compiler
         /// </summary>
         private void IdentifierList()
         {
+            ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.varEntry);
+            if (context == EntryType.classEntry)
+            {
+                listOfVariableNames.Add(lexemes.ToString());
+                sizeOfLocalVariables += size;
+            }
+            else
+            {
+                sizeOfLocalMethodVariables += size;
+            }
+            symbolTable.ConvertEntryToVarEntry(entry);
+            offset += (int)dataType;
+
             Match(Token.idt);
+            
             if(token == Token.commat)
             {
                 Match(Token.commat);
@@ -220,6 +266,12 @@ namespace Compiler
                 if (Types.Contains(token))
                 {
                     Type();
+
+                    context = EntryType.methodEntry;
+                    ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.methodEntry);
+                    listOfMethodNames.Add(lexemes.ToString());
+                    returnType = dataType;
+
                     Match(Token.idt);
                     Match(Token.lparentt);
                     depth++;
@@ -232,6 +284,11 @@ namespace Compiler
                     Expr();
                     Match(Token.semit);
                     Match(Token.rcurlyt);
+
+                    symbolTable.ConvertEntryToMethodEntry(entry);
+                    numOfParameters = 0;
+                    sizeOfLocalMethodVariables = 0;
+
                     depth--;
                     MethodDeclaration();
                 }
@@ -262,8 +319,19 @@ namespace Compiler
             if (Types.Contains(token))
             {
                 Type();
+
+                offset = 0;
+                ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.varEntry);
+                sizeOfLocalMethodVariables += size;
+                numOfParameters++;
+                parameterType.Add(dataType);
+
                 Match(Token.idt);
+
+                symbolTable.ConvertEntryToVarEntry(entry);
+
                 FormalRest();
+                offset += sizeOfLocalMethodVariables;
             }
         }
 
@@ -278,7 +346,16 @@ namespace Compiler
                 if (Types.Contains(token))
                 {
                     Type();
+
+                    offset = sizeOfLocalMethodVariables;
+                    ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.varEntry);
+                    sizeOfLocalMethodVariables += size;
+                    numOfParameters++;
+                    parameterType.Add(dataType);
+
                     Match(Token.idt);
+
+                    symbolTable.ConvertEntryToVarEntry(entry);
                     FormalRest();
                 }
             }

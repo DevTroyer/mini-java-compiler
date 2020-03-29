@@ -39,15 +39,25 @@ namespace Compiler
         // Global
         public static int depth;
         public static DataType dataType;
+        public static int offset = 0;
+        public static EntryType context;
 
-        public enum DataType { booleanType, floatType, intType, voidType };
+        public enum DataType { voidType, booleanType, intType, None, floatType };
         public enum EntryType { classEntry, methodEntry, varEntry, constEntry };
-        public enum ParameterPassingMode { passByValue, passByReference };
 
         // Class-specific
         public static int sizeOfLocalVariables;
-        public static List<string> listOfVariableNames;
-        public static List<string> listOfMethodNames;
+        public static List<string> listOfVariableNames = new List<string>();
+        public static List<string> listOfMethodNames = new List<string>();
+
+        // Variable=-specific
+        public static int size;
+
+        // Method-specific
+        public static int sizeOfLocalMethodVariables;
+        public static int numOfParameters;
+        public static List<DataType> parameterType = new List<DataType>();
+        public static DataType returnType;
 
         #endregion
 

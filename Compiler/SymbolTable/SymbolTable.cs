@@ -89,6 +89,7 @@ namespace Compiler
                     }
                 }
             }
+            Console.WriteLine();
         }
 
         /// <summary>
@@ -118,9 +119,7 @@ namespace Compiler
         /// <returns></returns>
         private void CheckDuplicates()
         {
-            int hashIndex = Hash(lexemes.ToString());
-
-            ISymbolTableEntry duplicateEntryFound = symbolTable[hashIndex].FirstOrDefault(duplicate => duplicate.Lexeme == lexemes.ToString() && duplicate.Depth == depth);
+            ISymbolTableEntry duplicateEntryFound = symbolTable[Hash(lexemes.ToString())].FirstOrDefault(duplicate => duplicate.Lexeme == lexemes.ToString() && duplicate.Depth == depth);
 
             if (duplicateEntryFound != null)
             {
@@ -139,6 +138,7 @@ namespace Compiler
             entry.ListOfVariableNames = listOfVariableNames;
             entry.ListOfMethodNames = listOfMethodNames;
             Insert(entry);
+            DisplayClassEntry(entry);
         }
 
         /// <summary>
@@ -147,8 +147,11 @@ namespace Compiler
         /// <param name="tableEntry"></param>
         public void ConvertEntryToConstEntry(ISymbolTableEntry tableEntry)
         {
-            //Constant entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
-            //Insert(entry);
+            Constant entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            entry.TypeOfConst = dataType;
+            entry.Offset = offset;
+            Insert(entry);
+            DisplayConstEntry(entry);
         }
 
         /// <summary>
@@ -158,7 +161,11 @@ namespace Compiler
         public void ConvertEntryToVarEntry(ISymbolTableEntry tableEntry)
         {
             Variable entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            entry.TypeOfVariable = dataType;
+            entry.Offset = offset;
+            entry.Size = size;
             Insert(entry);
+            DisplayVariableEntry(entry);
         }
 
         /// <summary>
@@ -168,7 +175,73 @@ namespace Compiler
         public void ConvertEntryToMethodEntry(ISymbolTableEntry tableEntry)
         {
             Method entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            entry.SizeOfLocalVariables = sizeOfLocalMethodVariables;
+            entry.NumOfParams = numOfParameters;
+            entry.ReturnType = returnType;
+            entry.ParameterType = parameterType;
             Insert(entry);
+            DisplayMethodEntry(entry);
+        }
+
+        private void DisplayVariableEntry(Variable entry)
+        {
+            Console.WriteLine("Variable");
+            Console.WriteLine($"Token: {entry.Token}");
+            Console.WriteLine($"Lexeme: {entry.Lexeme}");
+            Console.WriteLine($"Depth: {entry.Depth}");
+            Console.WriteLine($"Type of entry: {entry.TypeOfEntry}");
+            Console.WriteLine($"Type of variable: {entry.TypeOfVariable}");
+            Console.WriteLine($"Offset: {entry.Offset}");
+            Console.WriteLine($"Size: {entry.Size}");
+            Console.WriteLine();
+        }
+
+        private void DisplayConstEntry(Constant entry)
+        {
+            Console.WriteLine("Constant");
+            Console.WriteLine($"Token: {entry.Token}");
+            Console.WriteLine($"Lexeme: {entry.Lexeme}");
+            Console.WriteLine($"Depth: {entry.Depth}");
+            Console.WriteLine($"Type of entry: {entry.TypeOfEntry}");
+            Console.WriteLine($"Type of const: {entry.TypeOfConst}");
+            Console.WriteLine($"Offset: {entry.Offset}");
+            Console.WriteLine();
+        }
+
+        private void DisplayMethodEntry(Method entry)
+        {
+            Console.WriteLine("Method");
+            Console.WriteLine($"Token: {entry.Token}");
+            Console.WriteLine($"Lexeme: {entry.Lexeme}");
+            Console.WriteLine($"Depth: {entry.Depth}");
+            Console.WriteLine($"Type of entry: {entry.TypeOfEntry}");
+            Console.WriteLine($"Size of local variables: {entry.SizeOfLocalVariables}");
+            Console.WriteLine($"Number of parameters: {entry.NumOfParams}");
+            Console.WriteLine($"Return type: {entry.ReturnType}");
+            Console.WriteLine($"Parameter type: ");
+            Console.WriteLine();
+        }
+
+        private void DisplayClassEntry(Class entry)
+        {
+            Console.WriteLine("Class");
+            Console.WriteLine($"Token: {entry.Token}");
+            Console.WriteLine($"Lexeme: {entry.Lexeme}");
+            Console.WriteLine($"Depth: {entry.Depth}");
+            Console.WriteLine($"Type of entry: {entry.TypeOfEntry}");
+            Console.WriteLine($"Size of local variables: {entry.SizeOfLocalVariables}");
+            Console.Write($"List of local variable names: ");
+            foreach (string variableName in entry.ListOfVariableNames)
+            {
+                Console.Write($"{variableName} ");
+            }
+            Console.Write($"\nList of local method names: ");
+            foreach (string methodName in entry.ListOfMethodNames)
+            {
+                Console.Write($"{methodName} ");
+            }
+            Console.WriteLine();
+            Console.WriteLine();
         }
     }
 }
