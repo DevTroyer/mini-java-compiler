@@ -47,6 +47,8 @@ namespace Compiler
         {
             MoreClasses();
             MainClass();
+
+            // Display the lexemes at depth 0 - for testing purposes
             symbolTable.WriteTable(0);
         }
 
@@ -169,11 +171,19 @@ namespace Compiler
                     {
                         sizeOfLocalMethodVariables += size;
                     }
-                    symbolTable.ConvertEntryToConstEntry(entry);
-                    offset += (int)dataType;
 
                     Match(Token.idt);
                     Match(Token.assignopt);
+                    if(value != null)
+                    {
+                        symbolTable.ConvertEntryToConstIntEntry(entry);
+                    }
+                    else if(valueR != null)
+                    {
+                        symbolTable.ConvertEntryToConstDoubleEntry(entry);
+                    }
+                    offset += (int)dataType;
+
                     Match(Token.numt);
                     Match(Token.semit);
                     VariableDeclaration();
@@ -292,8 +302,10 @@ namespace Compiler
                     Match(Token.rcurlyt);
 
                     symbolTable.ConvertEntryToMethodEntry(entry);
+                    parameterType.Clear();
                     numOfParameters = 0;
                     sizeOfLocalMethodVariables = 0;
+                    sizeOfFormalParameters = 0;
 
                     symbolTable.WriteTable(depth);
                     symbolTable.DeleteDepth(depth);
@@ -330,7 +342,7 @@ namespace Compiler
 
                 offset = 0;
                 ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.varEntry);
-                sizeOfLocalMethodVariables += size;
+                sizeOfFormalParameters += size;
                 numOfParameters++;
                 parameterType.Add(dataType);
 
@@ -339,7 +351,7 @@ namespace Compiler
                 symbolTable.ConvertEntryToVarEntry(entry);
 
                 FormalRest();
-                offset += sizeOfLocalMethodVariables;
+                offset += sizeOfFormalParameters;
             }
         }
 
@@ -355,9 +367,9 @@ namespace Compiler
                 {
                     Type();
 
-                    offset = sizeOfLocalMethodVariables;
+                    offset = sizeOfFormalParameters;
                     ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.varEntry);
-                    sizeOfLocalMethodVariables += size;
+                    sizeOfFormalParameters += size;
                     numOfParameters++;
                     parameterType.Add(dataType);
 

@@ -481,7 +481,7 @@ namespace Compiler
         /// </summary>
         private void ProcessNumToken()
         {
-            while (numDeciderRegex.IsMatch(character.ToString()))
+             while (numDeciderRegex.IsMatch(character.ToString()))
             {
                 AppendLexeme();
                 GetNextCharacter();

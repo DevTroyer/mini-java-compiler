@@ -50,11 +50,12 @@ namespace Compiler
         public static List<string> listOfVariableNames = new List<string>();
         public static List<string> listOfMethodNames = new List<string>();
 
-        // Variable=-specific
+        // Variable-specific
         public static int size;
 
         // Method-specific
         public static int sizeOfLocalMethodVariables;
+        public static int sizeOfFormalParameters;
         public static int numOfParameters;
         public static List<DataType> parameterType = new List<DataType>();
         public static DataType returnType;

@@ -122,10 +122,10 @@ namespace Compiler
         {
             ISymbolTableEntry duplicateEntryFound = symbolTable[Hash(lexemes.ToString())].FirstOrDefault(duplicate => duplicate.Lexeme == lexemes.ToString() && duplicate.Depth == depth);
 
-            //if (duplicateEntryFound != null)
-            //{
-            //    ExceptionHandler.ThrowDuplicateEntryException(lexemes.ToString());
-            //}
+            if (duplicateEntryFound != null)
+            {
+                ExceptionHandler.ThrowDuplicateEntryException(lexemes.ToString());
+            }
         }
 
         /// <summary>
@@ -139,20 +139,37 @@ namespace Compiler
             entry.ListOfVariableNames = listOfVariableNames;
             entry.ListOfMethodNames = listOfMethodNames;
             Insert(entry);
+            /* Use for testing: DisplayClassEntry(entry); */
         }
 
         /// <summary>
-        /// Method that converts a table entry to a const entry.
+        /// Method that converts a table entry to a const double entry.
         /// </summary>
         /// <param name="tableEntry"></param>
-        public void ConvertEntryToConstEntry(ISymbolTableEntry tableEntry)
+        public void ConvertEntryToConstDoubleEntry(ISymbolTableEntry tableEntry)
         {
-            Constant entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            Constant<double?> entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            entry.Value = valueR;
             entry.TypeOfConst = dataType;
             entry.Offset = offset;
             Insert(entry);
+            /* Use for testing: DisplayConstDoubleEntry(entry); */
         }
 
+        /// <summary>
+        /// Method that converts a table entry to a const int entry.
+        /// </summary>
+        /// <param name="tableEntry"></param>
+        public void ConvertEntryToConstIntEntry(ISymbolTableEntry tableEntry)
+        {
+            Constant<int?> entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            entry.Value = value;
+            entry.TypeOfConst = dataType;
+            entry.Offset = offset;
+            Insert(entry);
+            /* Use for testing: DisplayConstIntEntry(entry); */
+        }
+        
         /// <summary>
         /// Method that converts a table entry to a var entry.
         /// </summary>
@@ -164,6 +181,7 @@ namespace Compiler
             entry.Offset = offset;
             entry.Size = size;
             Insert(entry);
+            /* Use for testing: DisplayVariableEntry(entry); */
         }
 
         /// <summary>
@@ -174,10 +192,12 @@ namespace Compiler
         {
             Method entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
             entry.SizeOfLocalVariables = sizeOfLocalMethodVariables;
+            entry.SizeOfFormalParameters = sizeOfFormalParameters;
             entry.NumOfParams = numOfParameters;
             entry.ReturnType = returnType;
             entry.ParameterType = parameterType;
             Insert(entry);
+            /* Use for testing: DisplayMethodEntry(entry); */
         }
 
         #region Testing Purposes
@@ -195,7 +215,7 @@ namespace Compiler
             Console.WriteLine();
         }
 
-        private void DisplayConstEntry(Constant entry)
+        private void DisplayConstIntEntry(Constant<int?> entry)
         {
             Console.WriteLine("Constant");
             Console.WriteLine($"Token: {entry.Token}");
@@ -204,6 +224,20 @@ namespace Compiler
             Console.WriteLine($"Type of entry: {entry.TypeOfEntry}");
             Console.WriteLine($"Type of const: {entry.TypeOfConst}");
             Console.WriteLine($"Offset: {entry.Offset}");
+            Console.WriteLine($"Value: {entry.Value}");
+            Console.WriteLine();
+        }
+
+        private void DisplayConstDoubleEntry(Constant<double?> entry)
+        {
+            Console.WriteLine("Constant");
+            Console.WriteLine($"Token: {entry.Token}");
+            Console.WriteLine($"Lexeme: {entry.Lexeme}");
+            Console.WriteLine($"Depth: {entry.Depth}");
+            Console.WriteLine($"Type of entry: {entry.TypeOfEntry}");
+            Console.WriteLine($"Type of const: {entry.TypeOfConst}");
+            Console.WriteLine($"Offset: {entry.Offset}");
+            Console.WriteLine($"Value: {entry.Value}");
             Console.WriteLine();
         }
 
@@ -215,10 +249,15 @@ namespace Compiler
             Console.WriteLine($"Depth: {entry.Depth}");
             Console.WriteLine($"Type of entry: {entry.TypeOfEntry}");
             Console.WriteLine($"Size of local variables: {entry.SizeOfLocalVariables}");
+            Console.WriteLine($"Size of formal parameters: {entry.SizeOfFormalParameters}");
             Console.WriteLine($"Number of parameters: {entry.NumOfParams}");
             Console.WriteLine($"Return type: {entry.ReturnType}");
-            Console.WriteLine($"Parameter type: ");
-            Console.WriteLine();
+            Console.Write($"Parameter type: ");
+            foreach (DataType parameterType in entry.ParameterType)
+            {
+                Console.Write($"{parameterType} ");
+            }
+            Console.WriteLine("\n");
         }
 
         private void DisplayClassEntry(Class entry)
@@ -243,6 +282,6 @@ namespace Compiler
             Console.WriteLine();
         }
 
-#endregion
+        #endregion
     }
 }

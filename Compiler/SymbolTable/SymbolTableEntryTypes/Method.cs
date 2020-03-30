@@ -10,6 +10,7 @@ namespace Compiler
         public int Depth { get; set; }
         public EntryType TypeOfEntry { get; set; }
         public int SizeOfLocalVariables { get; set; }
+        public int SizeOfFormalParameters { get; set; }
         public int NumOfParams { get; set; }
         public DataType ReturnType { get; set; }
         public List<DataType> ParameterType { get; set; } = new List<DataType>();
