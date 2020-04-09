@@ -1,9 +1,4 @@
-﻿// Tucker Troyer
-// Compiler Construction
-// Assignment 3 - Syntax Analyzer
-// Dr. Hamer
-// 2/21/2020
-
+﻿
 namespace Compiler
 {
     class SyntaxAnalyzer : Resources
@@ -20,7 +15,7 @@ namespace Compiler
             lexicalAnalyzer = new LexicalAnalyzer(commandLineFileName);
             symbolTable = new SymbolTable();
 
-            // Prime the parser :O
+            // Prime the parser
             lexicalAnalyzer.GetNextToken();
         }
 
@@ -98,8 +93,6 @@ namespace Compiler
             symbolTable.DeleteDepth(depth);
             depth--;
         }
-
-        #region Sequence of statements
 
         private void SequenceOfStatements()
         {
@@ -238,8 +231,6 @@ namespace Compiler
             Match(Token.addopt);
         }
 
-        #endregion
-
         /// <summary>
         /// The MoreClasses method for the Syntax Analyzer.
         /// </summary>
@@ -315,11 +306,11 @@ namespace Compiler
                     Match(Token.assignopt);
                     if(value != null)
                     {
-                        symbolTable.ConvertEntryToConstIntEntry(entry);
+                        symbolTable.ConvertEntryToIntConstantEntry(entry);
                     }
                     else if(valueR != null)
                     {
-                        symbolTable.ConvertEntryToConstDoubleEntry(entry);
+                        symbolTable.ConvertEntryToDoubleConstantEntry(entry);
                     }
                     offset += (int)dataType;
 
@@ -386,7 +377,7 @@ namespace Compiler
             {
                 sizeOfLocalMethodVariables += size;
             }
-            symbolTable.ConvertEntryToVarEntry(entry);
+            symbolTable.ConvertEntryToVariableEntry(entry);
             offset += (int)dataType;
 
             Match(Token.idt);
@@ -475,7 +466,7 @@ namespace Compiler
 
                 Match(Token.idt);
 
-                symbolTable.ConvertEntryToVarEntry(entry);
+                symbolTable.ConvertEntryToVariableEntry(entry);
 
                 FormalRest();
                 offset += sizeOfFormalParameters;
@@ -502,7 +493,7 @@ namespace Compiler
 
                     Match(Token.idt);
 
-                    symbolTable.ConvertEntryToVarEntry(entry);
+                    symbolTable.ConvertEntryToVariableEntry(entry);
                     FormalRest();
                 }
             }

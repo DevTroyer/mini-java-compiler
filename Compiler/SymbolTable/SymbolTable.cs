@@ -1,10 +1,4 @@
-﻿// Tucker Troyer
-// Compiler Construction
-// Assignment 4 - Symbol Table
-// Dr. Hamer
-// 3/6/2020
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -160,7 +154,7 @@ namespace Compiler
         /// Method that converts a table entry to a const double entry.
         /// </summary>
         /// <param name="tableEntry"></param>
-        public void ConvertEntryToConstDoubleEntry(ISymbolTableEntry tableEntry)
+        public void ConvertEntryToDoubleConstantEntry(ISymbolTableEntry tableEntry)
         {
             Constant<double?> entry = tableEntry as SymbolTableEntry;
             entry.Value = valueR;
@@ -175,7 +169,7 @@ namespace Compiler
         /// Method that converts a table entry to a const int entry.
         /// </summary>
         /// <param name="tableEntry"></param>
-        public void ConvertEntryToConstIntEntry(ISymbolTableEntry tableEntry)
+        public void ConvertEntryToIntConstantEntry(ISymbolTableEntry tableEntry)
         {
             Constant<int?> entry = tableEntry as SymbolTableEntry;
             entry.Value = value;
@@ -190,7 +184,7 @@ namespace Compiler
         /// Method that converts a table entry to a var entry.
         /// </summary>
         /// <param name="tableEntry"></param>
-        public void ConvertEntryToVarEntry(ISymbolTableEntry tableEntry)
+        public void ConvertEntryToVariableEntry(ISymbolTableEntry tableEntry)
         {
             Variable entry = tableEntry as SymbolTableEntry;
             entry.TypeOfVariable = dataType;
@@ -233,7 +227,7 @@ namespace Compiler
             Console.WriteLine();
         }
 
-        private void DisplayConstIntEntry(Constant<int?> entry)
+        private void DisplayIntConstantEntry(Constant<int?> entry)
         {
             Console.WriteLine("Constant");
             Console.WriteLine($"Token: {entry.Token}");
@@ -246,7 +240,7 @@ namespace Compiler
             Console.WriteLine();
         }
 
-        private void DisplayConstDoubleEntry(Constant<double?> entry)
+        private void DisplayDoubleConstantEntry(Constant<double?> entry)
         {
             Console.WriteLine("Constant");
             Console.WriteLine($"Token: {entry.Token}");
