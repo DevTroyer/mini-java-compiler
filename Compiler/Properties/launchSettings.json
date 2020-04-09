@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Compiler": {
-      "commandName": "Project",
-      "commandLineArgs": "SyntaxAnalyzerTestFile.txt"
+      "commandName": "Project"
     }
   }
 }

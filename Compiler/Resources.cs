@@ -13,7 +13,7 @@ namespace Compiler
         public static Regex wordTokenRegex = new Regex("[A-Za-z]");
         public static Regex identifiedWordTokenRegex = new Regex("[0-9A-Za-z_]");
         public static Regex numTokenRegex = new Regex("[0-9]");
-        public static Regex singleTokenRegex = new Regex(@"[-+*/(){},;.\[\]]");
+        public static Regex singleTokenRegex = new Regex(@"[-+*!/(){},;.\[\]]");
         public static Regex doubleTokenRegex = new Regex(@"[=!<>|&]");
         public static Regex relationalOpDeciderRegex = new Regex("[<>!=]");
         public static Regex inclusionOpDeciderRegex = new Regex("[|&]");
@@ -32,6 +32,12 @@ namespace Compiler
             Token.floatt
         };
 
+        public static List<Token> FactorTokens = new List<Token>()
+        {
+            Token.idt, Token.numt, Token.lparentt, Token.negateopt, Token.addopt,
+            Token.truet, Token.falset
+        };
+
         #endregion
 
         #region Symbol Table Resources
@@ -43,7 +49,7 @@ namespace Compiler
         public static EntryType context;
 
         public enum DataType { voidType, booleanType, intType, None, floatType };
-        public enum EntryType { classEntry, methodEntry, varEntry, constEntry };
+        public enum EntryType { tableEntry, classEntry, methodEntry, varEntry, constEntry };
 
         // Class-specific
         public static int sizeOfLocalVariables;
@@ -68,7 +74,7 @@ namespace Compiler
             finalt, classt, publict, statict, voidt, maint, Stringt, extendst, returnt, intt, floatt, booleant,
             ift, elset, whilet, printlnt, lengtht, truet, falset, thist, newt, addopt, mulopt, assignopt,
             relopt, lparentt, rparentt, lcurlyt, rcurlyt, lbrackt, rbrackt, commat, literalt, semit,
-            periodt, quotet, numt, idt, eoft, unknownt
+            periodt, quotet, numt, idt, eoft, negateopt, unknownt
         };
 
         // Global variables

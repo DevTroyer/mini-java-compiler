@@ -45,5 +45,23 @@ namespace Compiler
             Console.WriteLine($"Error - Line {lineNumber} - Unused tokens");
             System.Environment.Exit(0);
         }
+
+        /// <summary>
+        /// Method to throw an undeclared lexemes exception.
+        /// </summary>
+        public static void ThrowUndeclaredLexemesException(string lexeme)
+        {
+            Console.WriteLine($"Error - Line {lineNumber} - Lexeme '{lexeme}' is undeclared");
+            System.Environment.Exit(0);
+        }
+
+        /// <summary>
+        /// Method to throw an expected valid exception exception.
+        /// </summary>
+        public static void ThrowExpectedValidExpressionException(string lexeme)
+        {
+            Console.WriteLine($"Error - Line {lineNumber} - Expected valid expression, instead found {lexeme}");
+            System.Environment.Exit(0);
+        }
     }
 }

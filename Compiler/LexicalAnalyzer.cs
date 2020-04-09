@@ -429,6 +429,7 @@ namespace Compiler
             else if (lexemes.ToString() == "*") { token = Token.mulopt; }
             else if (lexemes.ToString() == "+") { token = Token.addopt; }
             else if (lexemes.ToString() == "-") { token = Token.addopt; }
+            else if (lexemes.ToString() == "!") { token = Token.negateopt; }
             else { token = Token.unknownt; }
         }
 

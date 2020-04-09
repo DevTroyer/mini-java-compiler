@@ -60,7 +60,7 @@ namespace Compiler
             Match(Token.finalt);
             Match(Token.classt);
 
-            ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.classEntry);
+            ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
 
             Match(Token.idt);
             Match(Token.lcurlyt);
@@ -68,6 +68,12 @@ namespace Compiler
             Match(Token.publict);
             Match(Token.statict);
             Match(Token.voidt);
+
+            context = EntryType.methodEntry;
+            ISymbolTableEntry mainEntry = symbolTable.CreateTableEntry(EntryType.tableEntry);
+            listOfMethodNames.Add(lexemes.ToString());
+            returnType = DataType.voidType;
+
             Match(Token.maint);
             Match(Token.lparentt);
             depth++;
@@ -93,13 +99,146 @@ namespace Compiler
             depth--;
         }
 
-        /// <summary>
-        /// The SequenceOfStatements method for the Syntax Analyzer.
-        /// </summary>
+        #region Sequence of statements
+
         private void SequenceOfStatements()
+        {
+            if (token == Token.idt)
+            {
+                Statement();
+                Match(Token.semit);
+                SequenceOfStatements();
+            }
+        }
+
+        private void Statement()
+        {
+            AssignStat();
+            IOStat();
+        }
+
+        private void AssignStat()
+        {
+            ISymbolTableEntry entry = symbolTable.Lookup(lexemes.ToString());
+
+            if (entry != null)
+            {
+                Match(Token.idt);
+                Match(Token.assignopt);
+                Expr();
+            }
+            else
+            {
+                ExceptionHandler.ThrowUndeclaredLexemesException(lexemes.ToString());
+            } 
+        }
+
+        private void IOStat()
         {
             // Implementation pending
         }
+
+        private void Expr()
+        {
+            if (FactorTokens.Contains(token))
+            {
+                Relation();
+            }
+        }
+
+        private void Relation()
+        {
+            SimpleExpr();
+        }
+
+        private void SimpleExpr()
+        {
+            Term();
+            MoreTerm();
+        }
+
+        private void Term()
+        {
+            Factor();
+            MoreFactor();
+        }
+
+        private void Factor()
+        {
+            if (token == Token.idt)
+            {
+                Match(Token.idt);
+            }
+            else if (token == Token.numt)
+            {
+                Match(Token.numt);
+            }
+            else if (token == Token.lparentt)
+            {
+                Match(Token.lparentt);
+                Expr();
+                Match(Token.rparentt);
+            }
+            else if (token == Token.negateopt)
+            {
+                Match(Token.negateopt);
+                Factor();
+            }
+            else if (token == Token.addopt && lexemes.ToString() == "-")
+            {
+                SignOp();
+                Factor();
+            }
+            else if (token == Token.truet)
+            {
+                Match(Token.truet);
+            }
+            else if (token == Token.falset)
+            {
+                Match(Token.falset);
+            }
+            else
+            {
+                ExceptionHandler.ThrowExpectedValidExpressionException(lexemes.ToString());
+            }
+        }
+
+        private void MoreFactor()
+        {
+            if (token == Token.mulopt)
+            {
+                MulOp();
+                Factor();
+                MoreFactor();
+            }
+        }
+
+        private void MoreTerm()
+        {
+            if (token == Token.addopt)
+            {
+                AddOp();
+                Term();
+                MoreTerm();
+            }
+        }
+
+        private void AddOp()
+        {
+            Match(Token.addopt);
+        }
+
+        private void MulOp()
+        {
+            Match(Token.mulopt);
+        }
+
+        private void SignOp()
+        {
+            Match(Token.addopt);
+        }
+
+        #endregion
 
         /// <summary>
         /// The MoreClasses method for the Syntax Analyzer.
@@ -124,7 +263,7 @@ namespace Compiler
         {
             Match(Token.classt);
 
-            ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.classEntry);
+            ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
             context = EntryType.classEntry;
 
             Match(Token.idt);
@@ -161,7 +300,7 @@ namespace Compiler
                 {
                     Type();
 
-                    ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.constEntry);
+                    ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
                     if(context == EntryType.classEntry)
                     {
                         listOfVariableNames.Add(lexemes.ToString());
@@ -200,10 +339,6 @@ namespace Compiler
                 Match(Token.semit);
                 VariableDeclaration();
             }
-            else if (token != Token.rcurlyt && token != Token.publict && token != Token.returnt)
-            {
-                ExceptionHandler.ThrowCustomException("variable or method declaration");
-            }
         }
 
         /// <summary>
@@ -241,7 +376,7 @@ namespace Compiler
         /// </summary>
         private void IdentifierList()
         {
-            ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.varEntry);
+            ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
             if (context == EntryType.classEntry)
             {
                 listOfVariableNames.Add(lexemes.ToString());
@@ -284,7 +419,7 @@ namespace Compiler
                     Type();
 
                     context = EntryType.methodEntry;
-                    ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.methodEntry);
+                    ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
                     listOfMethodNames.Add(lexemes.ToString());
                     returnType = dataType;
 
@@ -324,14 +459,6 @@ namespace Compiler
         }
 
         /// <summary>
-        /// The Expr method for the Syntax Analyzer.
-        /// </summary>
-        private void Expr()
-        {
-            // Implementation pending
-        }
-
-        /// <summary>
         /// The FormalList method for the Syntax Analyzer.
         /// </summary>
         private void FormalList()
@@ -341,7 +468,7 @@ namespace Compiler
                 Type();
 
                 offset = 0;
-                ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.varEntry);
+                ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
                 sizeOfFormalParameters += size;
                 numOfParameters++;
                 parameterType.Add(dataType);
@@ -368,7 +495,7 @@ namespace Compiler
                     Type();
 
                     offset = sizeOfFormalParameters;
-                    ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.varEntry);
+                    ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
                     sizeOfFormalParameters += size;
                     numOfParameters++;
                     parameterType.Add(dataType);

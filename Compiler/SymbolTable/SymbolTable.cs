@@ -34,17 +34,17 @@ namespace Compiler
         /// </summary>
         public void Insert(ISymbolTableEntry symbolTableEntry)
         {
-            int hashIndex = Hash(symbolTableEntry.Lexeme);
+            uint hashIndex = Hash(symbolTableEntry.Lexeme);
 
-            ISymbolTableEntry entryFoundInSymbolTable = null;
-
-            if (symbolTable[hashIndex].Count > 0 && symbolTable[hashIndex][0].TypeOfEntry == symbolTableEntry.TypeOfEntry && symbolTable[hashIndex].Count % 2 != 0)
+            if (symbolTableEntry.TypeOfEntry != EntryType.tableEntry)
             {
-                entryFoundInSymbolTable = symbolTable[hashIndex][0];
+                int index = symbolTable[hashIndex].FindIndex(tableEntry => tableEntry.Lexeme == symbolTableEntry.Lexeme && tableEntry.Depth == symbolTableEntry.Depth);
+                symbolTable[hashIndex][index] = symbolTableEntry;
             }
-
-            if (entryFoundInSymbolTable != null) { symbolTable[hashIndex][0] = symbolTableEntry; }
-            else { symbolTable[hashIndex].Insert(0, symbolTableEntry); }
+            else
+            {
+                symbolTable[hashIndex].Insert(0, symbolTableEntry);
+            }
         }
 
         /// <summary>
@@ -96,9 +96,22 @@ namespace Compiler
         /// <summary>
         /// Passed a lexemes and returns the location for that lexeme.
         /// </summary>
-        private int Hash(string lexeme)
+        private uint Hash(string lexeme)
         {
-            return Math.Abs(lexeme.GetHashCode()) % tableSize;
+            uint hash = 0, g;
+
+            foreach (char c in lexeme)
+            {
+                hash = (hash << 4) + (byte)c;
+
+                if ((g = hash & 0xf0000000) != 0)
+                {
+                    hash ^= (g >> 24);
+                    hash ^= g;
+                }
+            }
+
+            return hash % tableSize;
         }
 
         /// <summary>
@@ -134,10 +147,11 @@ namespace Compiler
         /// <param name="tableEntry"></param>
         public void ConvertEntryToClassEntry(ISymbolTableEntry tableEntry)
         {
-            Class entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            Class entry = tableEntry as SymbolTableEntry;
             entry.SizeOfLocalVariables = sizeOfLocalVariables;
             entry.ListOfVariableNames = listOfVariableNames;
             entry.ListOfMethodNames = listOfMethodNames;
+            entry.TypeOfEntry = EntryType.classEntry;
             Insert(entry);
             /* Use for testing: DisplayClassEntry(entry); */
         }
@@ -148,10 +162,11 @@ namespace Compiler
         /// <param name="tableEntry"></param>
         public void ConvertEntryToConstDoubleEntry(ISymbolTableEntry tableEntry)
         {
-            Constant<double?> entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            Constant<double?> entry = tableEntry as SymbolTableEntry;
             entry.Value = valueR;
             entry.TypeOfConst = dataType;
             entry.Offset = offset;
+            entry.TypeOfEntry = EntryType.constEntry;
             Insert(entry);
             /* Use for testing: DisplayConstDoubleEntry(entry); */
         }
@@ -162,10 +177,11 @@ namespace Compiler
         /// <param name="tableEntry"></param>
         public void ConvertEntryToConstIntEntry(ISymbolTableEntry tableEntry)
         {
-            Constant<int?> entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            Constant<int?> entry = tableEntry as SymbolTableEntry;
             entry.Value = value;
             entry.TypeOfConst = dataType;
             entry.Offset = offset;
+            entry.TypeOfEntry = EntryType.constEntry;
             Insert(entry);
             /* Use for testing: DisplayConstIntEntry(entry); */
         }
@@ -176,10 +192,11 @@ namespace Compiler
         /// <param name="tableEntry"></param>
         public void ConvertEntryToVarEntry(ISymbolTableEntry tableEntry)
         {
-            Variable entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            Variable entry = tableEntry as SymbolTableEntry;
             entry.TypeOfVariable = dataType;
             entry.Offset = offset;
             entry.Size = size;
+            entry.TypeOfEntry = EntryType.varEntry;
             Insert(entry);
             /* Use for testing: DisplayVariableEntry(entry); */
         }
@@ -190,12 +207,13 @@ namespace Compiler
         /// <param name="tableEntry"></param>
         public void ConvertEntryToMethodEntry(ISymbolTableEntry tableEntry)
         {
-            Method entry = Lookup(tableEntry.Lexeme) as SymbolTableEntry;
+            Method entry = tableEntry as SymbolTableEntry;
             entry.SizeOfLocalVariables = sizeOfLocalMethodVariables;
             entry.SizeOfFormalParameters = sizeOfFormalParameters;
             entry.NumOfParams = numOfParameters;
             entry.ReturnType = returnType;
             entry.ParameterType = parameterType;
+            entry.TypeOfEntry = EntryType.methodEntry;
             Insert(entry);
             /* Use for testing: DisplayMethodEntry(entry); */
         }
