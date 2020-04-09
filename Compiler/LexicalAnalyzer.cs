@@ -1,10 +1,4 @@
-﻿// Tucker Troyer
-// Compiler Construction
-// Assignment 1 - Lexical Analyzer
-// Dr. Hamer
-// 2/5/2020
-
-using System;
+﻿using System;
 using System.IO;
 
 namespace Compiler
@@ -20,10 +14,8 @@ namespace Compiler
         /// <param name="commandLineFileName"></param>
         public LexicalAnalyzer(string commandLineFileName)
         {
-            // Set token to unknown
             token = Token.unknownt;
 
-            // Set the line number to 1
             lineNumber = 1;
 
             // Verify the existence of the command line file in the directory
@@ -38,39 +30,15 @@ namespace Compiler
                 Console.WriteLine("The specified file does not exist in the working directory.");
             }
 
-            // Store reserved words into string array
-            StoreReservedWords();
-            
-            // Get first character of the command line input file stream
             GetNextCharacter();
         }
 
         /// <summary>
-        /// Method that stores the desired reserved words into the reservedWords string array.
+        /// Gets the next character in a stream of characters.
         /// </summary>
-        private void StoreReservedWords()
+        private void GetNextCharacter()
         {
-            reservedWords.Add("final");
-            reservedWords.Add("class");
-            reservedWords.Add("public");
-            reservedWords.Add("static");
-            reservedWords.Add("void");
-            reservedWords.Add("main");
-            reservedWords.Add("String");
-            reservedWords.Add("extends");
-            reservedWords.Add("return");
-            reservedWords.Add("int");
-            reservedWords.Add("float");
-            reservedWords.Add("boolean");
-            reservedWords.Add("if");
-            reservedWords.Add("else");
-            reservedWords.Add("while");
-            reservedWords.Add("System.out.println");
-            reservedWords.Add("length");
-            reservedWords.Add("true");
-            reservedWords.Add("false");
-            reservedWords.Add("this");
-            reservedWords.Add("new");
+            character = (char)streamReader.Read();
         }
 
         /// <summary>
@@ -78,7 +46,7 @@ namespace Compiler
         /// </summary>
         private void ClearLexemes()
         {
-            lexemes.Clear();
+            lexeme.Clear();
         }
 
         /// <summary>
@@ -86,15 +54,7 @@ namespace Compiler
         /// </summary>
         private void AppendLexeme()
         {
-            lexemes.Append(character);
-        }
-
-        /// <summary>
-        /// Method that gets the next character.
-        /// </summary>
-        private void GetNextCharacter()
-        {
-            character = (char)streamReader.Read();
+            lexeme.Append(character);
         }
 
         /// <summary>
@@ -238,7 +198,7 @@ namespace Compiler
             AppendLexeme();
             GetNextCharacter();
 
-            switch (lexemes[0].ToString())
+            switch (lexeme[0].ToString())
             {
                 case var match when wordTokenRegex.IsMatch(match):
                     ProcessWordToken();
@@ -283,7 +243,7 @@ namespace Compiler
             if(character == '"')
             {
                 token = Token.literalt;
-                literal = lexemes.ToString();
+                literal = lexeme.ToString();
                 ClearLexemes();
                 literal = null;
                 AppendLexeme();
@@ -294,7 +254,7 @@ namespace Compiler
             {
                 RemoveWhitespace();
                 token = Token.literalt;
-                literal = lexemes.ToString();
+                literal = lexeme.ToString();
             }
             else
             {
@@ -312,18 +272,18 @@ namespace Compiler
             {
                 AppendLexeme();
                 GetNextCharacter();
-                if(lexemes.Equals("System"))
+                if(lexeme.Equals("System"))
                 {
                     AppendLexeme();
                     GetNextCharacter();
                 }
-                if (lexemes.Equals("System.out"))
+                if (lexeme.Equals("System.out"))
                 {
                     AppendLexeme();
                     GetNextCharacter();
                 }
             }
-            if(lexemes.ToString().Length > 31)
+            if(lexeme.ToString().Length > 31)
             {
                 token = Token.unknownt;
             }
@@ -339,7 +299,7 @@ namespace Compiler
         /// <returns></returns>
         private Token IdentifyWordToken()
         {
-            switch (lexemes.ToString())
+            switch (lexeme.ToString())
             {
                 case "final":
                     token = Token.finalt;
@@ -416,20 +376,20 @@ namespace Compiler
         /// </summary>
         private void ProcessSingleToken()
         {
-            if (lexemes.ToString() == ".") { token = Token.periodt; }
-            else if (lexemes.ToString() == ";") { token = Token.semit; }
-            else if (lexemes.ToString() == ",") { token = Token.commat; }
-            else if (lexemes.ToString() == "(") { token = Token.lparentt; }
-            else if (lexemes.ToString() == ")") { token = Token.rparentt; }
-            else if (lexemes.ToString() == "[") { token = Token.lbrackt; }
-            else if (lexemes.ToString() == "]") { token = Token.rbrackt; }
-            else if (lexemes.ToString() == "{") { token = Token.lcurlyt; }
-            else if (lexemes.ToString() == "}") { token = Token.rcurlyt; }
-            else if (lexemes.ToString() == "/") { token = Token.mulopt; }
-            else if (lexemes.ToString() == "*") { token = Token.mulopt; }
-            else if (lexemes.ToString() == "+") { token = Token.addopt; }
-            else if (lexemes.ToString() == "-") { token = Token.addopt; }
-            else if (lexemes.ToString() == "!") { token = Token.negateopt; }
+            if (lexeme.ToString() == ".") { token = Token.periodt; }
+            else if (lexeme.ToString() == ";") { token = Token.semit; }
+            else if (lexeme.ToString() == ",") { token = Token.commat; }
+            else if (lexeme.ToString() == "(") { token = Token.lparentt; }
+            else if (lexeme.ToString() == ")") { token = Token.rparentt; }
+            else if (lexeme.ToString() == "[") { token = Token.lbrackt; }
+            else if (lexeme.ToString() == "]") { token = Token.rbrackt; }
+            else if (lexeme.ToString() == "{") { token = Token.lcurlyt; }
+            else if (lexeme.ToString() == "}") { token = Token.rcurlyt; }
+            else if (lexeme.ToString() == "/") { token = Token.mulopt; }
+            else if (lexeme.ToString() == "*") { token = Token.mulopt; }
+            else if (lexeme.ToString() == "+") { token = Token.addopt; }
+            else if (lexeme.ToString() == "-") { token = Token.addopt; }
+            else if (lexeme.ToString() == "!") { token = Token.negateopt; }
             else { token = Token.unknownt; }
         }
 
@@ -438,33 +398,33 @@ namespace Compiler
         /// </summary>
         private void ProcessDoubleToken()
         {
-            if (relationalOpDeciderRegex.IsMatch(lexemes[0].ToString()))
+            if (relationalOpDeciderRegex.IsMatch(lexeme[0].ToString()))
             {
                 if(character != '=')
                 {
-                    if (lexemes.ToString() == ">") { token = Token.relopt; }
-                    else if (lexemes.ToString() == "<") { token = Token.relopt; }
-                    else if (lexemes.ToString() == "=") { token = Token.assignopt; }
+                    if (lexeme.ToString() == ">") { token = Token.relopt; }
+                    else if (lexeme.ToString() == "<") { token = Token.relopt; }
+                    else if (lexeme.ToString() == "=") { token = Token.assignopt; }
                 }
                 else
                 {
                     AppendLexeme();
-                    if (lexemes.ToString() == "!=") { token = Token.relopt; }
-                    else if (lexemes.ToString() == "<=") { token = Token.relopt; }
-                    else if (lexemes.ToString() == ">=") { token = Token.relopt; }
-                    else if (lexemes.ToString() == "==") { token = Token.relopt; }
+                    if (lexeme.ToString() == "!=") { token = Token.relopt; }
+                    else if (lexeme.ToString() == "<=") { token = Token.relopt; }
+                    else if (lexeme.ToString() == ">=") { token = Token.relopt; }
+                    else if (lexeme.ToString() == "==") { token = Token.relopt; }
                     GetNextCharacter();
                 }
             }
-            else if (inclusionOpDeciderRegex.IsMatch(lexemes[0].ToString()))
+            else if (inclusionOpDeciderRegex.IsMatch(lexeme[0].ToString()))
             {
-                if (lexemes[0].ToString() == "&" && character == '&')
+                if (lexeme[0].ToString() == "&" && character == '&')
                 {
                     AppendLexeme();
                     token = Token.mulopt;
                     GetNextCharacter();
                 }
-                else if(lexemes[0].ToString() == "|" && character == '|')
+                else if(lexeme[0].ToString() == "|" && character == '|')
                 {
                     AppendLexeme();
                     token = Token.addopt;
@@ -488,8 +448,8 @@ namespace Compiler
                 GetNextCharacter();
             }
 
-            int lexLength = lexemes.Length;
-            if (lexemes[lexLength - 1] == '.')
+            int lexLength = lexeme.Length;
+            if (lexeme[lexLength - 1] == '.')
             {
                 token = Token.unknownt;
             }
@@ -500,13 +460,13 @@ namespace Compiler
 
             if (token != Token.unknownt)
             {
-                if (lexemes.ToString().Contains('.'))
+                if (lexeme.ToString().Contains('.'))
                 {
-                    valueR = Convert.ToDouble(lexemes.ToString());
+                    valueR = Convert.ToDouble(lexeme.ToString());
                 }
                 else
                 {
-                    value = Convert.ToInt32(lexemes.ToString());
+                    value = Convert.ToInt32(lexeme.ToString());
                 }
             }
         }
@@ -516,7 +476,8 @@ namespace Compiler
         /// </summary>
         public void DisplayToken()
         {
-            Console.WriteLine("{0,-8}{1,-12}{2,-40}{3,-14}{4,-14}{5,-40}", lineNumber, token, lexemes, value, valueR, literal);
+            Console.WriteLine("{0,-8}{1,-12}{2,-40}{3,-14}{4,-14}{5,-40}", lineNumber, token, lexeme, value, valueR, literal);
         }
     }
 }
+// 523 lines

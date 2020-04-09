@@ -12,7 +12,7 @@ namespace Compiler
         {
             if (token != Token.eoft)
             {
-                Console.WriteLine($"Error - Line {lineNumber} - Expected {expectedToken}, actual '{lexemes}'");
+                Console.WriteLine($"Error - Line {lineNumber} - Expected {expectedToken}, actual '{lexeme}'");
                 System.Environment.Exit(0);
             }
         }
@@ -23,7 +23,7 @@ namespace Compiler
         /// <param name="description"></param>
         public static void ThrowCustomMessageException(string message)
         {
-            Console.WriteLine($"Error - Line {lineNumber} - Expected {message}, actual '{lexemes}'");
+            Console.WriteLine($"Error - Line {lineNumber} - Expected {message}, actual '{lexeme}'");
             System.Environment.Exit(0);
         }
 

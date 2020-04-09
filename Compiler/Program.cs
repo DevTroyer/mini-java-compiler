@@ -20,7 +20,7 @@ namespace Compiler
 
                 if (token == Token.eoft)
                 {
-                    Console.WriteLine("Good job! You did it!");
+                    Console.WriteLine("Mini Java compiler has successfully finished compiling.");
                 }
                 else
                 {

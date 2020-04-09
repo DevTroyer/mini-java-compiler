@@ -71,7 +71,7 @@ namespace Compiler
 
             context = EntryType.methodEntry;
             ISymbolTableEntry mainEntry = symbolTable.CreateTableEntry(EntryType.tableEntry);
-            listOfMethodNames.Add(lexemes.ToString());
+            listOfMethodNames.Add(lexeme.ToString());
             returnType = DataType.voidType;
 
             Match(Token.maint);
@@ -119,7 +119,7 @@ namespace Compiler
 
         private void AssignStat()
         {
-            ISymbolTableEntry entry = symbolTable.Lookup(lexemes.ToString());
+            ISymbolTableEntry entry = symbolTable.Lookup(lexeme.ToString());
 
             if (entry != null)
             {
@@ -129,7 +129,7 @@ namespace Compiler
             }
             else
             {
-                ExceptionHandler.ThrowUndeclaredIdentifierException(lexemes.ToString());
+                ExceptionHandler.ThrowUndeclaredIdentifierException(lexeme.ToString());
             } 
         }
 
@@ -184,7 +184,7 @@ namespace Compiler
                 Match(Token.negateopt);
                 Factor();
             }
-            else if (token == Token.addopt && lexemes.ToString() == "-")
+            else if (token == Token.addopt && lexeme.ToString() == "-")
             {
                 SignOp();
                 Factor();
@@ -199,7 +199,7 @@ namespace Compiler
             }
             else
             {
-                ExceptionHandler.ThrowInvalidExpressionException(lexemes.ToString());
+                ExceptionHandler.ThrowInvalidExpressionException(lexeme.ToString());
             }
         }
 
@@ -303,7 +303,7 @@ namespace Compiler
                     ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
                     if(context == EntryType.classEntry)
                     {
-                        listOfVariableNames.Add(lexemes.ToString());
+                        listOfVariableNames.Add(lexeme.ToString());
                         sizeOfLocalVariables += size;
                     }
                     else
@@ -379,7 +379,7 @@ namespace Compiler
             ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
             if (context == EntryType.classEntry)
             {
-                listOfVariableNames.Add(lexemes.ToString());
+                listOfVariableNames.Add(lexeme.ToString());
                 sizeOfLocalVariables += size;
             }
             else
@@ -420,7 +420,7 @@ namespace Compiler
 
                     context = EntryType.methodEntry;
                     ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
-                    listOfMethodNames.Add(lexemes.ToString());
+                    listOfMethodNames.Add(lexeme.ToString());
                     returnType = dataType;
 
                     Match(Token.idt);

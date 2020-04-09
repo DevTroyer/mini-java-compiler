@@ -120,7 +120,7 @@ namespace Compiler
         /// <param name="entryType"></param>
         public ISymbolTableEntry CreateTableEntry(EntryType entryType)
         {
-            SymbolTableEntry entry = new SymbolTableEntry(Token.idt, lexemes.ToString(), depth, entryType);
+            SymbolTableEntry entry = new SymbolTableEntry(Token.idt, lexeme.ToString(), depth, entryType);
             CheckDuplicates();
             Insert(entry);
 
@@ -133,11 +133,11 @@ namespace Compiler
         /// <returns></returns>
         private void CheckDuplicates()
         {
-            ISymbolTableEntry duplicateEntryFound = symbolTable[Hash(lexemes.ToString())].FirstOrDefault(duplicate => duplicate.Lexeme == lexemes.ToString() && duplicate.Depth == depth);
+            ISymbolTableEntry duplicateEntryFound = symbolTable[Hash(lexeme.ToString())].FirstOrDefault(duplicate => duplicate.Lexeme == lexeme.ToString() && duplicate.Depth == depth);
 
             if (duplicateEntryFound != null)
             {
-                ExceptionHandler.ThrowDuplicateIdentifierException(lexemes.ToString());
+                ExceptionHandler.ThrowDuplicateIdentifierException(lexeme.ToString());
             }
         }
 
