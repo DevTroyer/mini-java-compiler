@@ -286,7 +286,7 @@ namespace Compiler
 
             token = lexeme.ToString().Length > 31 ? Token.unknownt : IdentifyWordToken();
 
-            //Token token2 = (bool)System.Enum.Parse(typeof(Token), lexeme.ToString()) ? (Token)System.Enum.Parse(typeof(Token), lexeme.ToString()) : Token.idt;
+            //Token token2 = (bool)System.Enum.Parse(typeof(Token), lexeme.ToString() + "t") ? (Token)System.Enum.Parse(typeof(Token), lexeme.ToString() + "t") : Token.idt;
         }
 
         /// <summary>
@@ -445,14 +445,8 @@ namespace Compiler
             }
 
             int lexLength = lexeme.Length;
-            if (lexeme[lexLength - 1] == '.')
-            {
-                token = Token.unknownt;
-            }
-            else
-            {
-                token = Token.numt;
-            }
+
+            token = lexeme[lexLength - 1] == '.' ? Token.unknownt : Token.numt;
 
             if (token != Token.unknownt)
             {
@@ -467,13 +461,17 @@ namespace Compiler
             }
         }
 
+        #region Testing
+
         /// <summary>
-        /// Method that displays a single token.
+        /// Displays a single token along with attributes of the token.
         /// </summary>
         public void DisplayToken()
         {
             Console.WriteLine("{0,-8}{1,-12}{2,-40}{3,-14}{4,-14}{5,-40}", lineNumber, token, lexeme, value, valueR, literal);
         }
+
+        #endregion
     }
 }
 // 523 lines
