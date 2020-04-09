@@ -2,7 +2,7 @@
   "profiles": {
     "Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "test1.java"
+      "commandLineArgs": "syntaxAnalyzerTestFile.txt"
     }
   }
 }

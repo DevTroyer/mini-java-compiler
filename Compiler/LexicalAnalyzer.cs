@@ -283,14 +283,10 @@ namespace Compiler
                     GetNextCharacter();
                 }
             }
-            if(lexeme.ToString().Length > 31)
-            {
-                token = Token.unknownt;
-            }
-            else
-            {
-                token = IdentifyWordToken();
-            }
+
+            token = lexeme.ToString().Length > 31 ? Token.unknownt : IdentifyWordToken();
+
+            //Token token2 = (bool)System.Enum.Parse(typeof(Token), lexeme.ToString()) ? (Token)System.Enum.Parse(typeof(Token), lexeme.ToString()) : Token.idt;
         }
 
         /// <summary>
