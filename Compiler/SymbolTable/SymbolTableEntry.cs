@@ -9,7 +9,7 @@ namespace Compiler
         public int Depth { get; set; }
         public EntryType TypeOfEntry { get; set; }
 
-        public SymbolTableEntry(string _lexeme, Token _token, int _depth, EntryType _typeOfEntry)
+        public SymbolTableEntry(Token _token, string _lexeme, int _depth, EntryType _typeOfEntry)
         {
             Token = _token;
             Lexeme = _lexeme;

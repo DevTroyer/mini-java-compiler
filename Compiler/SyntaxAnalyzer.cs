@@ -36,7 +36,7 @@ namespace Compiler
             }
             else if(token != Token.eoft)
             {
-                ExceptionHandler.ThrowException(inputToken);
+                ExceptionHandler.ThrowUnexpectedTokenException(inputToken);
             }
         }
 
@@ -129,7 +129,7 @@ namespace Compiler
             }
             else
             {
-                ExceptionHandler.ThrowUndeclaredLexemesException(lexemes.ToString());
+                ExceptionHandler.ThrowUndeclaredIdentifierException(lexemes.ToString());
             } 
         }
 
@@ -199,7 +199,7 @@ namespace Compiler
             }
             else
             {
-                ExceptionHandler.ThrowExpectedValidExpressionException(lexemes.ToString());
+                ExceptionHandler.ThrowInvalidExpressionException(lexemes.ToString());
             }
         }
 
@@ -252,7 +252,7 @@ namespace Compiler
             }
             else if(token != Token.finalt)
             {
-                ExceptionHandler.ThrowException(Token.classt);
+                ExceptionHandler.ThrowUnexpectedTokenException(Token.classt);
             }
         }
 
@@ -329,7 +329,7 @@ namespace Compiler
                 }
                 else
                 {
-                    ExceptionHandler.ThrowCustomException("return type");
+                    ExceptionHandler.ThrowCustomMessageException("return type");
                 }
             }
             else if (Types.Contains(token))
@@ -398,11 +398,11 @@ namespace Compiler
             }
             else if(token == Token.idt)
             {
-                ExceptionHandler.ThrowException(Token.commat);
+                ExceptionHandler.ThrowUnexpectedTokenException(Token.commat);
             }
             else if (token != Token.semit)
             {
-                ExceptionHandler.ThrowException(Token.semit);
+                ExceptionHandler.ThrowUnexpectedTokenException(Token.semit);
             }
         }
 
@@ -449,12 +449,12 @@ namespace Compiler
                 }
                 else
                 {
-                    ExceptionHandler.ThrowCustomException("return type");
+                    ExceptionHandler.ThrowCustomMessageException("return type");
                 }
             }
             else if(token != Token.rcurlyt)
             {
-                ExceptionHandler.ThrowException(Token.publict);
+                ExceptionHandler.ThrowUnexpectedTokenException(Token.publict);
             }
         }
 
@@ -508,7 +508,7 @@ namespace Compiler
             }
             else if(token != Token.rparentt)
             {
-                ExceptionHandler.ThrowException(Token.commat);
+                ExceptionHandler.ThrowUnexpectedTokenException(Token.commat);
             }
         }
     }

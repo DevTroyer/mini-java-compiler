@@ -5,10 +5,10 @@ namespace Compiler
     class ExceptionHandler : Resources
     {
         /// <summary>
-        /// Method to throw a general exception message.
+        /// Throws an exception for an unexpected token.
         /// </summary>
         /// <param name="expectedToken"></param>
-        public static void ThrowException(Token expectedToken)
+        public static void ThrowUnexpectedTokenException(Token expectedToken)
         {
             if (token != Token.eoft)
             {
@@ -18,49 +18,49 @@ namespace Compiler
         }
 
         /// <summary>
-        /// Method to throw a custom exception message.
+        /// Throws an exception with a custom message.
         /// </summary>
         /// <param name="description"></param>
-        public static void ThrowCustomException(string description)
+        public static void ThrowCustomMessageException(string message)
         {
-            Console.WriteLine($"Error - Line {lineNumber} - Expected {description}, actual '{lexemes}'");
+            Console.WriteLine($"Error - Line {lineNumber} - Expected {message}, actual '{lexemes}'");
             System.Environment.Exit(0);
         }
 
         /// <summary>
-        /// Method to throw a duplicate entry exception.
+        /// Thows an exception for a duplicate identifier (lexeme).
         /// </summary>
         /// <param name="lexeme"></param>
-        public static void ThrowDuplicateEntryException(string lexeme)
+        public static void ThrowDuplicateIdentifierException(string lexeme)
         {
-            Console.WriteLine($"Error - Line {lineNumber} - '{lexeme}' already exists in the current context");
+            Console.WriteLine($"Error - Line {lineNumber} - Identifier '{lexeme}' already exists in the current context");
             System.Environment.Exit(0);
         }
 
         /// <summary>
-        /// Method to throw an unused tokens exception.
+        /// Throws an exception for unused tokens.
         /// </summary>
         public static void ThrowUnusedTokensException()
         {
-            Console.WriteLine($"Error - Line {lineNumber} - Unused tokens");
+            Console.WriteLine($"Error - Line {lineNumber} - Unused tokens encountered");
             System.Environment.Exit(0);
         }
 
         /// <summary>
-        /// Method to throw an undeclared lexemes exception.
+        /// Throws an exception for an undeclared identifier.
         /// </summary>
-        public static void ThrowUndeclaredLexemesException(string lexeme)
+        public static void ThrowUndeclaredIdentifierException(string lexeme)
         {
-            Console.WriteLine($"Error - Line {lineNumber} - Lexeme '{lexeme}' is undeclared");
+            Console.WriteLine($"Error - Line {lineNumber} - Identifier '{lexeme}' is undeclared");
             System.Environment.Exit(0);
         }
 
         /// <summary>
-        /// Method to throw an expected valid exception exception.
+        /// Throw an exception for an invalid expression.
         /// </summary>
-        public static void ThrowExpectedValidExpressionException(string lexeme)
+        public static void ThrowInvalidExpressionException(string lexeme)
         {
-            Console.WriteLine($"Error - Line {lineNumber} - Expected valid expression, instead found {lexeme}");
+            Console.WriteLine($"Error - Line {lineNumber} - Expected a valid expression, instead found '{lexeme}'");
             System.Environment.Exit(0);
         }
     }

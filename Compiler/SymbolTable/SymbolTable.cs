@@ -120,7 +120,7 @@ namespace Compiler
         /// <param name="entryType"></param>
         public ISymbolTableEntry CreateTableEntry(EntryType entryType)
         {
-            SymbolTableEntry entry = new SymbolTableEntry(lexemes.ToString(), Token.idt, depth, entryType);
+            SymbolTableEntry entry = new SymbolTableEntry(Token.idt, lexemes.ToString(), depth, entryType);
             CheckDuplicates();
             Insert(entry);
 
@@ -137,7 +137,7 @@ namespace Compiler
 
             if (duplicateEntryFound != null)
             {
-                ExceptionHandler.ThrowDuplicateEntryException(lexemes.ToString());
+                ExceptionHandler.ThrowDuplicateIdentifierException(lexemes.ToString());
             }
         }
 
@@ -210,7 +210,7 @@ namespace Compiler
             Method entry = tableEntry as SymbolTableEntry;
             entry.SizeOfLocalVariables = sizeOfLocalMethodVariables;
             entry.SizeOfFormalParameters = sizeOfFormalParameters;
-            entry.NumOfParams = numOfParameters;
+            entry.NumberOfParameters = numOfParameters;
             entry.ReturnType = returnType;
             entry.ParameterType = parameterType;
             entry.TypeOfEntry = EntryType.methodEntry;
@@ -268,7 +268,7 @@ namespace Compiler
             Console.WriteLine($"Type of entry: {entry.TypeOfEntry}");
             Console.WriteLine($"Size of local variables: {entry.SizeOfLocalVariables}");
             Console.WriteLine($"Size of formal parameters: {entry.SizeOfFormalParameters}");
-            Console.WriteLine($"Number of parameters: {entry.NumOfParams}");
+            Console.WriteLine($"Number of parameters: {entry.NumberOfParameters}");
             Console.WriteLine($"Return type: {entry.ReturnType}");
             Console.Write($"Parameter type: ");
             foreach (DataType parameterType in entry.ParameterType)
