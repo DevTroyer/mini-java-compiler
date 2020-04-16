@@ -12,7 +12,7 @@ namespace Compiler
         {
             if (token != Token.eoft)
             {
-                Console.WriteLine($"Error - Line {lineNumber} - Expected {expectedToken}, actual '{lexeme}'");
+                Console.WriteLine($"Error ({lineNumber}): Expected {expectedToken}, actual '{lexeme}'");
                 System.Environment.Exit(0);
             }
         }
@@ -23,7 +23,7 @@ namespace Compiler
         /// <param name="description"></param>
         public static void ThrowCustomMessageException(string message)
         {
-            Console.WriteLine($"Error - Line {lineNumber} - Expected {message}, actual '{lexeme}'");
+            Console.WriteLine($"Error ({lineNumber}): Expected {message}, actual '{lexeme}'");
             System.Environment.Exit(0);
         }
 
@@ -33,7 +33,7 @@ namespace Compiler
         /// <param name="lexeme"></param>
         public static void ThrowDuplicateIdentifierException(string lexeme)
         {
-            Console.WriteLine($"Error - Line {lineNumber} - Identifier '{lexeme}' already exists in the current context");
+            Console.WriteLine($"Error ({lineNumber}): Identifier '{lexeme}' already exists in the current context");
             System.Environment.Exit(0);
         }
 
@@ -42,7 +42,7 @@ namespace Compiler
         /// </summary>
         public static void ThrowUnusedTokensException()
         {
-            Console.WriteLine($"Error - Line {lineNumber} - Unused tokens encountered");
+            Console.WriteLine($"Error ({lineNumber}): Unused tokens encountered");
             System.Environment.Exit(0);
         }
 
@@ -51,7 +51,7 @@ namespace Compiler
         /// </summary>
         public static void ThrowUndeclaredIdentifierException(string lexeme)
         {
-            Console.WriteLine($"Error - Line {lineNumber} - Identifier '{lexeme}' is undeclared");
+            Console.WriteLine($"Error ({lineNumber}): Identifier '{lexeme}' is undeclared");
             System.Environment.Exit(0);
         }
 
@@ -60,7 +60,19 @@ namespace Compiler
         /// </summary>
         public static void ThrowInvalidExpressionException(string lexeme)
         {
-            Console.WriteLine($"Error - Line {lineNumber} - Expected a valid expression, instead found '{lexeme}'");
+            Console.WriteLine($"Error ({lineNumber}): Expected a valid expression, instead found '{lexeme}'");
+            System.Environment.Exit(0);
+        }
+
+        public static void ThrowFileExistsException(string filename)
+        {
+            Console.WriteLine($"Error: File with filename '{filename}' already exists in project directory");
+            System.Environment.Exit(0);
+        }
+
+        public static void ThrowVariableOverflowException()
+        {
+            Console.WriteLine($"Error: Variable overflow of temporary variables during compilation");
             System.Environment.Exit(0);
         }
     }

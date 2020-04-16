@@ -2,7 +2,7 @@
 
 namespace Compiler
 {
-    class SymbolTableEntry : ISymbolTableEntry
+    public class SymbolTableEntry : ISymbolTableEntry
     {
         public Token Token { get; set; }
         public string Lexeme { get; set; }

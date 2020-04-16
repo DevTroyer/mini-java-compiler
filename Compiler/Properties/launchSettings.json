@@ -2,7 +2,7 @@
   "profiles": {
     "Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "syntaxAnalyzerTestFile.txt"
+      "commandLineArgs": "threeAddressCodeMethodCallTestFile.java"
     }
   }
 }

@@ -44,6 +44,8 @@ namespace Compiler
             Token.truet, Token.falset
         };
 
+        public static List<string> referenceParameters = new List<string>();
+
         #endregion
 
         #region Symbol Table Resources
@@ -71,6 +73,22 @@ namespace Compiler
         public static int numOfParameters;
         public static List<DataType> parameterType = new List<DataType>();
         public static DataType returnType;
+
+        #endregion
+
+        #region Intermediate Code Generator Resources
+
+        public static int temporaryVariableCounter;
+        public static string temporaryVariable;
+        public static int temporaryVariableOffset;
+        public static string code;
+        public static Variable Tplace { get; set; }
+        public static Variable Rplace { get; set; }
+        public static Variable Eplace { get; set; }
+        public static string BpOffsetNotation;
+        public static int something;
+        public static Stack<string> stack = new Stack<string>();
+        public static Stack<string> tempVars = new Stack<string>();
 
         #endregion
 

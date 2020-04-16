@@ -184,11 +184,12 @@ namespace Compiler
         /// Method that converts a table entry to a var entry.
         /// </summary>
         /// <param name="tableEntry"></param>
-        public void ConvertEntryToVariableEntry(ISymbolTableEntry tableEntry)
+        public void ConvertEntryToVariableEntry(IntermediateCodeGenerator intermediateCodeGenerator, ISymbolTableEntry tableEntry, bool isParameter)
         {
             Variable entry = tableEntry as SymbolTableEntry;
             entry.TypeOfVariable = dataType;
             entry.Offset = offset;
+            entry.OffsetNotation = BpOffsetNotation;//isParameter ? intermediateCodeGenerator.CalculateParameterOffsetNotation(entry) : intermediateCodeGenerator.CalculateLocalVariableOffsetNotation(entry);
             entry.Size = size;
             entry.TypeOfEntry = EntryType.varEntry;
             Insert(entry);

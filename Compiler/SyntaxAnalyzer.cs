@@ -1,10 +1,12 @@
-﻿
+﻿using System.IO;
+
 namespace Compiler
 {
     class SyntaxAnalyzer : Resources
     {
         LexicalAnalyzer lexicalAnalyzer { get; set; }
         SymbolTable symbolTable { get; set; }
+        IntermediateCodeGenerator intermediateCodeGenerator { get; set; }
 
         /// <summary>
         /// Constructor for the Syntax Analyzer class.
@@ -14,6 +16,9 @@ namespace Compiler
         {
             lexicalAnalyzer = new LexicalAnalyzer(commandLineFileName);
             symbolTable = new SymbolTable();
+            intermediateCodeGenerator = new IntermediateCodeGenerator();
+
+            intermediateCodeGenerator.SetupTacFile(commandLineFileName);
 
             // Prime the parser
             lexicalAnalyzer.GetNextToken();
@@ -43,8 +48,8 @@ namespace Compiler
             MoreClasses();
             MainClass();
 
-            // Display the lexemes at depth 0 - for testing purposes
-            symbolTable.WriteTable(0);
+            //// Display the lexemes at depth 0 - for testing purposes
+            //symbolTable.WriteTable(0);
         }
 
         /// <summary>
@@ -66,6 +71,7 @@ namespace Compiler
 
             context = EntryType.methodEntry;
             ISymbolTableEntry mainEntry = symbolTable.CreateTableEntry(EntryType.tableEntry);
+            intermediateCodeGenerator.Emit($"proc {mainEntry.Lexeme}");
             listOfMethodNames.Add(lexeme.ToString());
             returnType = DataType.voidType;
 
@@ -80,6 +86,7 @@ namespace Compiler
             Match(Token.lcurlyt);
             SequenceOfStatements();
             Match(Token.rcurlyt);
+            intermediateCodeGenerator.Emit($"endp {mainEntry.Lexeme}");
             symbolTable.WriteTable(depth);
             symbolTable.DeleteDepth(depth);
             depth--;
@@ -114,16 +121,115 @@ namespace Compiler
         {
             ISymbolTableEntry entry = symbolTable.Lookup(lexeme.ToString());
 
-            if (entry != null)
+            if (entry != null && entry.TypeOfEntry == EntryType.classEntry)
+            {
+                MethodCall();
+            }
+            else if (entry != null && entry.TypeOfEntry == EntryType.varEntry)
             {
                 Match(Token.idt);
                 Match(Token.assignopt);
-                Expr();
+
+                ISymbolTableEntry entry2 = symbolTable.Lookup(lexeme.ToString());
+                if (entry2 != null && entry2.TypeOfEntry == EntryType.classEntry)
+                {
+                    MethodCall();
+                    intermediateCodeGenerator.Emit($"{entry.Lexeme} = _AX");
+                }
+                else
+                {
+                    Expr();
+                    intermediateCodeGenerator.GenerateFinalExpression(entry as Variable);
+                    intermediateCodeGenerator.Emit(code);
+                }
+            }
+            else
+            {
+                // undeclared lexeme
+            }
+        }
+
+        private void MethodCall()
+        {
+            Match(Token.idt);
+            Match(Token.periodt);
+            ISymbolTableEntry entry = symbolTable.Lookup(lexeme.ToString());
+            if (entry != null)
+            {
+                if(entry.TypeOfEntry == EntryType.methodEntry)
+                {
+                    Match(Token.idt);
+                    Match(Token.lparentt);
+                    Params();
+                    if(referenceParameters.Count > 0)
+                    {
+                        for (int i = referenceParameters.Count - 1; i >= 0; i--)
+                        {
+                            ISymbolTableEntry tableEntry = symbolTable.Lookup(referenceParameters[i]);
+                            Variable parameterEntry = tableEntry as Variable;
+                            intermediateCodeGenerator.Emit($"push {parameterEntry.OffsetNotation}");
+                        }
+                        referenceParameters.Clear();
+                    }
+                    intermediateCodeGenerator.Emit($"call {entry.Lexeme}");
+                    Match(Token.rparentt);
+                }
+                else
+                {
+                    ExceptionHandler.ThrowUndeclaredIdentifierException(lexeme.ToString());
+                }
             }
             else
             {
                 ExceptionHandler.ThrowUndeclaredIdentifierException(lexeme.ToString());
-            } 
+            }
+        }
+
+        private void Params()
+        {
+            if(token != Token.rparentt)
+            {
+                if (token == Token.idt)
+                {
+                    referenceParameters.Add(lexeme.ToString());
+                    Match(Token.idt);
+                    ParamsTail();
+                }
+                else if (token == Token.numt)
+                {
+                    referenceParameters.Add(lexeme.ToString());
+                    Match(Token.numt);
+                    ParamsTail();
+                }
+                else
+                {
+                    // Throw exception
+                }
+            }
+        }
+
+        private void ParamsTail()
+        {
+            if(token == Token.commat)
+            {
+                Match(Token.commat);
+                if (token == Token.idt)
+                {
+                    referenceParameters.Add(lexeme.ToString());
+                    Match(Token.idt);
+                    ParamsTail();
+                }
+                else if (token == Token.numt)
+                {
+                    referenceParameters.Add(lexeme.ToString());
+                    Match(Token.numt);
+                    ParamsTail();
+                }
+                else
+                {
+                    // Throw exception
+                }
+            }
         }
 
         private void IOStat()
@@ -133,9 +239,10 @@ namespace Compiler
 
         private void Expr()
         {
-            if (FactorTokens.Contains(token))
+            if(FactorTokens.Contains(token))
             {
                 Relation();
+                Eplace = Tplace;
             }
         }
 
@@ -147,6 +254,7 @@ namespace Compiler
         private void SimpleExpr()
         {
             Term();
+            Rplace = Tplace;
             MoreTerm();
         }
 
@@ -160,10 +268,22 @@ namespace Compiler
         {
             if (token == Token.idt)
             {
-                Match(Token.idt);
+                Tplace = symbolTable.Lookup(lexeme.ToString()) as Variable;
+                
+                if(Tplace != null)
+                {
+                    Match(Token.idt);
+                }
+                else
+                {
+                    // lexeme is undeclared
+                }
             }
             else if (token == Token.numt)
             {
+                Tplace = new Variable();
+                temporaryVariable = lexeme.ToString();
+                Tplace.Lexeme = lexeme.ToString();
                 Match(Token.numt);
             }
             else if (token == Token.lparentt)
@@ -200,8 +320,16 @@ namespace Compiler
         {
             if (token == Token.mulopt)
             {
+                intermediateCodeGenerator.CreateTempVariable();
+                intermediateCodeGenerator.GenerateThreeAddressCodeSegment();
+                tempVars.Push(temporaryVariable);
                 MulOp();
+                stack.Push(code);
                 Factor();
+                code = stack.Pop();
+                code += Tplace.OffsetNotation;
+                Rplace.OffsetNotation = temporaryVariable;
+                intermediateCodeGenerator.Emit(code);
                 MoreFactor();
             }
         }
@@ -210,8 +338,16 @@ namespace Compiler
         {
             if (token == Token.addopt)
             {
+                intermediateCodeGenerator.CreateTempVariable();
+                intermediateCodeGenerator.GenerateThreeAddressCodeSegment();
+                tempVars.Push(temporaryVariable);
                 AddOp();
+                stack.Push(code);
                 Term();
+                code = stack.Pop();
+                code += Tplace.OffsetNotation;
+                Rplace.OffsetNotation = temporaryVariable;
+                intermediateCodeGenerator.Emit(code);
                 MoreTerm();
             }
         }
@@ -274,8 +410,8 @@ namespace Compiler
             sizeOfLocalVariables = 0;
             listOfVariableNames.Clear();
             listOfMethodNames.Clear();
-            symbolTable.WriteTable(depth);
-            symbolTable.DeleteDepth(depth);
+            //symbolTable.WriteTable(depth);
+            //symbolTable.DeleteDepth(depth);
             depth--;
         }
 
@@ -368,6 +504,7 @@ namespace Compiler
         private void IdentifierList()
         {
             ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
+
             if (context == EntryType.classEntry)
             {
                 listOfVariableNames.Add(lexeme.ToString());
@@ -377,7 +514,8 @@ namespace Compiler
             {
                 sizeOfLocalMethodVariables += size;
             }
-            symbolTable.ConvertEntryToVariableEntry(entry);
+            BpOffsetNotation = $"_BP-{offset}";
+            symbolTable.ConvertEntryToVariableEntry(intermediateCodeGenerator, entry, false);
             offset += (int)dataType;
 
             Match(Token.idt);
@@ -411,23 +549,29 @@ namespace Compiler
 
                     context = EntryType.methodEntry;
                     ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
+                    intermediateCodeGenerator.Emit($"proc {entry.Lexeme}");
                     listOfMethodNames.Add(lexeme.ToString());
                     returnType = dataType;
 
                     Match(Token.idt);
                     Match(Token.lparentt);
                     depth++;
+                    sizeOfFormalParameters = 4;
                     FormalList();
                     Match(Token.rparentt);
                     Match(Token.lcurlyt);
+                    offset = 2; //TODO
                     VariableDeclaration();
+                    temporaryVariableCounter = offset - 2;
                     SequenceOfStatements();
+                    temporaryVariableCounter = 0;
                     Match(Token.returnt);
                     Expr();
                     Match(Token.semit);
                     Match(Token.rcurlyt);
 
                     symbolTable.ConvertEntryToMethodEntry(entry);
+                    intermediateCodeGenerator.Emit($"endp {entry.Lexeme}");
                     parameterType.Clear();
                     numOfParameters = 0;
                     sizeOfLocalMethodVariables = 0;
@@ -460,16 +604,18 @@ namespace Compiler
 
                 offset = 0;
                 ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
+                BpOffsetNotation = $"_BP+{sizeOfFormalParameters}";
+
                 sizeOfFormalParameters += size;
                 numOfParameters++;
                 parameterType.Add(dataType);
 
                 Match(Token.idt);
 
-                symbolTable.ConvertEntryToVariableEntry(entry);
+                symbolTable.ConvertEntryToVariableEntry(intermediateCodeGenerator, entry, true);
 
                 FormalRest();
-                offset += sizeOfFormalParameters;
+                offset += (int)dataType;
             }
         }
 
@@ -485,16 +631,18 @@ namespace Compiler
                 {
                     Type();
 
-                    offset = sizeOfFormalParameters;
                     ISymbolTableEntry entry = symbolTable.CreateTableEntry(EntryType.tableEntry);
+                    BpOffsetNotation = $"_BP+{sizeOfFormalParameters}";
+
                     sizeOfFormalParameters += size;
                     numOfParameters++;
                     parameterType.Add(dataType);
 
                     Match(Token.idt);
 
-                    symbolTable.ConvertEntryToVariableEntry(entry);
+                    symbolTable.ConvertEntryToVariableEntry(intermediateCodeGenerator, entry, true);
                     FormalRest();
+                    offset += (int)dataType;
                 }
             }
             else if(token != Token.rparentt)
