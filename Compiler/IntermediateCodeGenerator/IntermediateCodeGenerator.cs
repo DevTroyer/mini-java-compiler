@@ -5,10 +5,11 @@ namespace Compiler
     public class IntermediateCodeGenerator : Resources
     {
         public StreamWriter tacFile;
+        public int tempVariableOffset { get; set; }
 
         public IntermediateCodeGenerator()
         {
-            temporaryVariableCounter = 0;
+            tempVariableOffset = 2;
         }
 
         public void SetupTacFile(string tacFilename)
@@ -30,92 +31,99 @@ namespace Compiler
             tacFile.AutoFlush = true;
         }
 
-        public string CreateTempVariable()
+        public void CreateTempVariable(ref string tempVarName, ISymbolTableEntry entry)
         {
-            temporaryVariableCounter += (int)dataType;
+            Variable var = entry as Variable;
 
-            if (temporaryVariableCounter > 99)
+            tempVarName = $"_bp-{sizeOfLocalMethodVariables + tempVariableOffset}";
+
+            if(var != null)
             {
-                ExceptionHandler.ThrowVariableOverflowException();
+                tempVariableOffset += 2;
             }
 
-            return temporaryVariable = $"_BP-{temporaryVariableCounter}";
+            //if (var != null && var.TypeOfEntry != EntryType.tableEntry)
+            //{
+            //    tempVariableOffset += 2;
+            //}
+            //else
+            //{
+            //    CalculateSize();
+            //}
         }
 
-        public void GenerateThreeAddressCodeSegment()
+        public void GenerateThreeAddressCodeSegment(ref string code, string tempVarName, ISymbolTableEntry Rplace)
         {
-            code = $"{temporaryVariable} = {Tplace.OffsetNotation} {lexeme.ToString()} ";
+            code = $"{tempVarName} = {Rplace.OffsetNotation} {lexeme.ToString()} ";
         }
 
-        public void GenerateFinalExpression(Variable entry)
+        public void GenerateFinalExpression(ISymbolTableEntry entry, ISymbolTableEntry Eplace, ref string code)
         {
-            code = $"{entry.OffsetNotation} = {temporaryVariable}";
+            code = $"{entry.OffsetNotation} = {Eplace.OffsetNotation}";
+            Emit(ref code);
+        }
+
+        public void Emit(ref string threeAddressCodeLine)
+        {
+            tacFile.WriteLine(threeAddressCodeLine);
+            threeAddressCodeLine = "";
         }
 
         public void Emit(string threeAddressCodeLine)
         {
-            tacFile.WriteLine(threeAddressCodeLine);
+            if(threeAddressCodeLine != "")
+                tacFile.WriteLine(threeAddressCodeLine);
         }
 
-        public string CalculateParameterOffsetNotation(ISymbolTableEntry entry)
+        public void GenerateTempExpressionTAC(ref ISymbolTableEntry Tplace)
         {
-            int size = CalculateSize();
-            string bpLocation = string.Format($"_BP+{offset + size}");
-            return bpLocation;
+            string tempVarName = "";
+            CreateTempVariable(ref tempVarName, Tplace);
+            Emit($"{tempVarName} = {Tplace.OffsetNotation}");
+            Tplace.OffsetNotation = tempVarName;
         }
 
-        public string CalculateLocalVariableOffsetNotation(ISymbolTableEntry entry)
+        private void CalculateSize()
         {
-            int size = CalculateSize();
-            string bpLocation = string.Format($"_BP-{offset + size - 2}");
-            return bpLocation;
-        }
-
-        private int CalculateSize()
-        {
-            int size = 2;
             switch (dataType)
             {
                 case DataType.floatType:
-                    size += 4;
+                    tempVariableOffset += 4;
                     break;
                 case DataType.intType:
-                    size += 2;
+                    tempVariableOffset += 2;
                     break;
                 case DataType.booleanType:
-                    size += 1;
+                    tempVariableOffset += 1;
                     break;
             }
-            return size;
         }
 
-        // CALL IMMEDIATELY AFTER CREATETEMPVARIABLE()
+        // Old implementation before refactor: keep for future reference
 
-        //ISymbolTableEntry entry = new SymbolTableEntry(Token.idt, temporaryVariable, depth, EntryType.tableEntry);
-
-        //symbolTable.Insert(entry);
-
-        //symbolTable.ConvertEntryToVariableEntry(entry);
-
-
-
-
-
-        //public string CalculateOffsetParameterNotation(ISymbolTableEntry entry)
+        //public string CreateTempVariable()
         //{
-        //    string bpLocation = string.Empty;
-        //    if (entry.Depth == 1 || entry.TypeOfEntry == EntryType.methodEntry)
+        //    temporaryVariableCounter += (int)dataType;
+
+        //    if (temporaryVariableCounter > 99)
         //    {
-        //        bpLocation = entry.Lexeme.ToString();
-        //    }
-        //    else
-        //    {
-        //        if (entry.TypeOfEntry == EntryType.varEntry && entry.isparamater ?)
-        //            bpLocation = string.Format("_BP+{0}", entry.Offset);
-        //        else
-        //            bpLocation = string.Format("_BP-{0}", entry.Value.Offset);
+        //        ExceptionHandler.ThrowVariableOverflowException();
         //    }
 
+        //    return temporaryVariable = $"_BP-{temporaryVariableCounter}";
+        //}
+
+        //public string CalculateParameterOffsetNotation(ISymbolTableEntry entry)
+        //{
+        //    int size = CalculateSize();
+        //    string bpLocation = string.Format($"_BP+{offset + size}");
+        //    return bpLocation;
+        //}
+
+        //public string CalculateLocalVariableOffsetNotation(ISymbolTableEntry entry)
+        //{
+        //    int size = CalculateSize();
+        //    string bpLocation = string.Format($"_BP-{offset + size - 2}");
         //    return bpLocation;
         //}
     }

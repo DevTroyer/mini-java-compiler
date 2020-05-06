@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Compiler": {
-      "commandName": "Project",
-      "commandLineArgs": "threeAddressCodeMethodCallTestFile.java"
+      "commandName": "Project"
     }
   }
 }

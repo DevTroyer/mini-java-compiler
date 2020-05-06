@@ -12,6 +12,7 @@ namespace Compiler
         public int SizeOfLocalVariables { get; set; }
         public List<string> ListOfVariableNames { get; set; } = new List<string>();
         public List<string> ListOfMethodNames { get; set; } = new List<string>();
+        public string OffsetNotation { get; set; }
 
         public static implicit operator Class(SymbolTableEntry symbolTableEntry)
         {
@@ -20,7 +21,8 @@ namespace Compiler
                 Lexeme = symbolTableEntry.Lexeme,
                 Token = symbolTableEntry.Token,
                 Depth = symbolTableEntry.Depth,
-                TypeOfEntry = symbolTableEntry.TypeOfEntry
+                TypeOfEntry = symbolTableEntry.TypeOfEntry,
+                OffsetNotation = symbolTableEntry.OffsetNotation
             };
         }
     }

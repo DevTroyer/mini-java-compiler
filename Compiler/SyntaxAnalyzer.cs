@@ -120,8 +120,10 @@ namespace Compiler
         private void AssignStat()
         {
             ISymbolTableEntry entry = symbolTable.Lookup(lexeme.ToString());
+            ISymbolTableEntry Eplace = null;
+            string code = "";
 
-            if (entry != null && entry.TypeOfEntry == EntryType.classEntry)
+            if (entry != null && (entry.TypeOfEntry == EntryType.classEntry || entry.TypeOfEntry == EntryType.tableEntry))
             {
                 MethodCall();
             }
@@ -138,8 +140,8 @@ namespace Compiler
                 }
                 else
                 {
-                    Expr();
-                    intermediateCodeGenerator.GenerateFinalExpression(entry as Variable);
+                    Expr(ref Eplace);
+                    intermediateCodeGenerator.GenerateFinalExpression(entry, Eplace, ref code);
                     intermediateCodeGenerator.Emit(code);
                 }
             }
@@ -237,40 +239,52 @@ namespace Compiler
             // Implementation pending
         }
 
-        private void Expr()
+        private void Expr(ref ISymbolTableEntry Eplace)
         {
+            ISymbolTableEntry Tplace = null;
+
             if(FactorTokens.Contains(token))
             {
-                Relation();
+                Relation(ref Tplace);
                 Eplace = Tplace;
             }
         }
 
-        private void Relation()
+        private void Relation(ref ISymbolTableEntry Tplace)
         {
-            SimpleExpr();
+            SimpleExpr(ref Tplace);
         }
 
-        private void SimpleExpr()
+        private void SimpleExpr(ref ISymbolTableEntry Tplace)
         {
-            Term();
-            Rplace = Tplace;
-            MoreTerm();
+            Term(ref Tplace);
+            //Rplace = Tplace;
+            MoreTerm(ref Tplace);
         }
 
-        private void Term()
+        private void Term(ref ISymbolTableEntry Tplace)
         {
-            Factor();
-            MoreFactor();
+            Factor(ref Tplace);
+            MoreFactor(ref Tplace);
         }
 
-        private void Factor()
+        private void Factor(ref ISymbolTableEntry Tplace)
         {
             if (token == Token.idt)
             {
-                Tplace = symbolTable.Lookup(lexeme.ToString()) as Variable;
-                
-                if(Tplace != null)
+                //Tplace = symbolTable.Lookup(lexeme.ToString()) as Variable;
+                ISymbolTableEntry Xplace = symbolTable.Lookup(lexeme.ToString());
+
+                if(Xplace.TypeOfEntry == EntryType.constEntry)
+                {
+                    Tplace = Xplace as Constant;
+                }
+                else
+                {
+                    Tplace = Xplace as Variable;
+                }                                               
+
+                if (Tplace != null)
                 {
                     Match(Token.idt);
                 }
@@ -282,25 +296,39 @@ namespace Compiler
             else if (token == Token.numt)
             {
                 Tplace = new Variable();
-                temporaryVariable = lexeme.ToString();
-                Tplace.Lexeme = lexeme.ToString();
+                Tplace.OffsetNotation = lexeme.ToString();
+                intermediateCodeGenerator.GenerateTempExpressionTAC(ref Tplace);
+                //Tplace.Lexeme = lexeme.ToString();
                 Match(Token.numt);
             }
             else if (token == Token.lparentt)
             {
                 Match(Token.lparentt);
-                Expr();
+                Expr(ref Tplace);
                 Match(Token.rparentt);
             }
             else if (token == Token.negateopt)
             {
                 Match(Token.negateopt);
-                Factor();
+                Factor(ref Tplace);
             }
             else if (token == Token.addopt && lexeme.ToString() == "-")
             {
+                string code = "";
+                string tempVarName = "";
+
+                Tplace = new Variable();
+                Tplace.TypeOfEntry = EntryType.varEntry;
+                Tplace.OffsetNotation = "0";
+
+                
+                intermediateCodeGenerator.CreateTempVariable(ref tempVarName, Tplace);
+                intermediateCodeGenerator.GenerateThreeAddressCodeSegment(ref code, tempVarName, Tplace);
                 SignOp();
-                Factor();
+                Factor(ref Tplace);
+                code += Tplace.OffsetNotation;
+                Tplace.OffsetNotation = tempVarName;
+                intermediateCodeGenerator.Emit(ref code);
             }
             else if (token == Token.truet)
             {
@@ -316,39 +344,63 @@ namespace Compiler
             }
         }
 
-        private void MoreFactor()
+        private void MoreFactor(ref ISymbolTableEntry Rplace)
         {
+            string code = "";
+            string tempVarName = "";
+            ISymbolTableEntry Tplace = null;
+
             if (token == Token.mulopt)
             {
-                intermediateCodeGenerator.CreateTempVariable();
-                intermediateCodeGenerator.GenerateThreeAddressCodeSegment();
-                tempVars.Push(temporaryVariable);
+                intermediateCodeGenerator.CreateTempVariable(ref tempVarName, Rplace);
+                intermediateCodeGenerator.GenerateThreeAddressCodeSegment(ref code, tempVarName, Rplace);
+                //tempVars.Push(temporaryVariable);
                 MulOp();
-                stack.Push(code);
-                Factor();
-                code = stack.Pop();
+                //stack.Push(code);
+                Factor(ref Tplace);
+                //code = stack.Pop();
                 code += Tplace.OffsetNotation;
-                Rplace.OffsetNotation = temporaryVariable;
-                intermediateCodeGenerator.Emit(code);
-                MoreFactor();
+                string value = Rplace.OffsetNotation;
+                if (tempVarName != Rplace.OffsetNotation)
+                {
+                    Rplace.OffsetNotation = tempVarName;
+                }
+                else
+                {
+                    Rplace.OffsetNotation = value;
+                }
+                intermediateCodeGenerator.Emit(ref code);
+                MoreFactor(ref Rplace);
             }
         }
 
-        private void MoreTerm()
+        private void MoreTerm(ref ISymbolTableEntry Rplace)
         {
+            string code = "";
+            string tempVarName = "";
+            ISymbolTableEntry Tplace = null;
+
             if (token == Token.addopt)
             {
-                intermediateCodeGenerator.CreateTempVariable();
-                intermediateCodeGenerator.GenerateThreeAddressCodeSegment();
-                tempVars.Push(temporaryVariable);
+                intermediateCodeGenerator.CreateTempVariable(ref tempVarName, Rplace);
+                intermediateCodeGenerator.GenerateThreeAddressCodeSegment(ref code, tempVarName, Rplace);
+                //tempVars.Push(temporaryVariable);
                 AddOp();
-                stack.Push(code);
-                Term();
-                code = stack.Pop();
+                //stack.Push(code);
+                Term(ref Tplace);
+                //code = stack.Pop();
                 code += Tplace.OffsetNotation;
-                Rplace.OffsetNotation = temporaryVariable;
-                intermediateCodeGenerator.Emit(code);
-                MoreTerm();
+                string value = Rplace.OffsetNotation;
+                if (tempVarName != Rplace.OffsetNotation)
+                {
+                    Rplace.OffsetNotation = tempVarName;
+                }
+                else
+                {
+                    Rplace.OffsetNotation = value;
+                }
+                intermediateCodeGenerator.Emit(ref code);
+                MoreTerm(ref Rplace);
             }
         }
 
@@ -440,13 +492,14 @@ namespace Compiler
 
                     Match(Token.idt);
                     Match(Token.assignopt);
+                    BpOffsetNotation = $"_BP-{offset}";
                     if(value != null)
                     {
-                        symbolTable.ConvertEntryToIntConstantEntry(entry);
+                        symbolTable.ConvertEntryToConstantEntry(entry, value);
                     }
                     else if(valueR != null)
                     {
-                        symbolTable.ConvertEntryToDoubleConstantEntry(entry);
+                        symbolTable.ConvertEntryToConstantEntry(entry, valueR);
                     }
                     offset += (int)dataType;
 
@@ -540,6 +593,7 @@ namespace Compiler
         /// </summary>
         private void MethodDeclaration()
         {
+            ISymbolTableEntry Eplace = null;
             if(token == Token.publict)
             {
                 Match(Token.publict);
@@ -561,12 +615,13 @@ namespace Compiler
                     Match(Token.rparentt);
                     Match(Token.lcurlyt);
                     offset = 2; //TODO
+                    intermediateCodeGenerator.tempVariableOffset = offset;
                     VariableDeclaration();
-                    temporaryVariableCounter = offset - 2;
+                    //temporaryVariableCounter = offset - 2;
                     SequenceOfStatements();
-                    temporaryVariableCounter = 0;
+                    //temporaryVariableCounter = 0;
                     Match(Token.returnt);
-                    Expr();
+                    Expr(ref Eplace);
                     Match(Token.semit);
                     Match(Token.rcurlyt);
 

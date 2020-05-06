@@ -154,31 +154,33 @@ namespace Compiler
         /// Method that converts a table entry to a const double entry.
         /// </summary>
         /// <param name="tableEntry"></param>
-        public void ConvertEntryToDoubleConstantEntry(ISymbolTableEntry tableEntry)
+        public void ConvertEntryToConstantEntry(ISymbolTableEntry tableEntry, dynamic value)
         {
-            Constant<double?> entry = tableEntry as SymbolTableEntry;
-            entry.Value = valueR;
-            entry.TypeOfConst = dataType;
-            entry.Offset = offset;
-            entry.TypeOfEntry = EntryType.constEntry;
-            Insert(entry);
-            /* Use for testing: DisplayConstDoubleEntry(entry); */
-        }
-
-        /// <summary>
-        /// Method that converts a table entry to a const int entry.
-        /// </summary>
-        /// <param name="tableEntry"></param>
-        public void ConvertEntryToIntConstantEntry(ISymbolTableEntry tableEntry)
-        {
-            Constant<int?> entry = tableEntry as SymbolTableEntry;
+            Constant entry = tableEntry as SymbolTableEntry;
             entry.Value = value;
             entry.TypeOfConst = dataType;
             entry.Offset = offset;
             entry.TypeOfEntry = EntryType.constEntry;
+            entry.OffsetNotation = BpOffsetNotation;
             Insert(entry);
-            /* Use for testing: DisplayConstIntEntry(entry); */
+            /* Use for testing: DisplayConstDoubleEntry(entry); */
         }
+
+        ///// <summary>
+        ///// Method that converts a table entry to a const int entry.
+        ///// </summary>
+        ///// <param name="tableEntry"></param>
+        //public void ConvertEntryToIntConstantEntry(ISymbolTableEntry tableEntry)
+        //{
+        //    Constant<int?> entry = tableEntry as SymbolTableEntry;
+        //    entry.Value = value;
+        //    entry.TypeOfConst = dataType;
+        //    entry.Offset = offset;
+        //    entry.TypeOfEntry = EntryType.constEntry;
+        //    entry.OffsetNotation = BpOffsetNotation;
+        //    Insert(entry);
+        //    /* Use for testing: DisplayConstIntEntry(entry); */
+        //}
         
         /// <summary>
         /// Method that converts a table entry to a var entry.
@@ -192,6 +194,7 @@ namespace Compiler
             entry.OffsetNotation = BpOffsetNotation;//isParameter ? intermediateCodeGenerator.CalculateParameterOffsetNotation(entry) : intermediateCodeGenerator.CalculateLocalVariableOffsetNotation(entry);
             entry.Size = size;
             entry.TypeOfEntry = EntryType.varEntry;
+            entry.OffsetNotation = BpOffsetNotation;
             Insert(entry);
             /* Use for testing: DisplayVariableEntry(entry); */
         }
@@ -228,7 +231,7 @@ namespace Compiler
             Console.WriteLine();
         }
 
-        private void DisplayIntConstantEntry(Constant<int?> entry)
+        private void DisplayConstantEntry(Constant entry)
         {
             Console.WriteLine("Constant");
             Console.WriteLine($"Token: {entry.Token}");
@@ -241,18 +244,18 @@ namespace Compiler
             Console.WriteLine();
         }
 
-        private void DisplayDoubleConstantEntry(Constant<double?> entry)
-        {
-            Console.WriteLine("Constant");
-            Console.WriteLine($"Token: {entry.Token}");
-            Console.WriteLine($"Lexeme: {entry.Lexeme}");
-            Console.WriteLine($"Depth: {entry.Depth}");
-            Console.WriteLine($"Type of entry: {entry.TypeOfEntry}");
-            Console.WriteLine($"Type of const: {entry.TypeOfConst}");
-            Console.WriteLine($"Offset: {entry.Offset}");
-            Console.WriteLine($"Value: {entry.Value}");
-            Console.WriteLine();
-        }
+        //private void DisplayDoubleConstantEntry(Constant<double?> entry)
+        //{
+        //    Console.WriteLine("Constant");
+        //    Console.WriteLine($"Token: {entry.Token}");
+        //    Console.WriteLine($"Lexeme: {entry.Lexeme}");
+        //    Console.WriteLine($"Depth: {entry.Depth}");
+        //    Console.WriteLine($"Type of entry: {entry.TypeOfEntry}");
+        //    Console.WriteLine($"Type of const: {entry.TypeOfConst}");
+        //    Console.WriteLine($"Offset: {entry.Offset}");
+        //    Console.WriteLine($"Value: {entry.Value}");
+        //    Console.WriteLine();
+        //}
 
         private void DisplayMethodEntry(Method entry)
         {
