@@ -3,10 +3,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Compiler
-{
-    public class Resources
-    {
+namespace Compiler {
+    public class Resources {
         #region Lexical Analyzer Resources
 
         // Global regular expressions
@@ -19,8 +17,7 @@ namespace Compiler
         public static Regex inclusionOpDeciderRegex = new Regex("[|&]");
         public static Regex numDeciderRegex = new Regex("[0-9.]");
 
-        public static List<string> reservedWords = new List<string>(21)
-        {
+        public static List<string> reservedWords = new List<string>(21) {
             "final", "class", "public", "static", "void", "main", "String", "extends", "return", "int", "float", "boolean",
             "if", "else", "while", "System.out.println", "length", "true", "false", "this", "new"
         };
@@ -30,16 +27,14 @@ namespace Compiler
         #region Syntax Analyzer Resources
 
         // Return types
-        public static List<Token> Types = new List<Token>(4)
-        {
+        public static List<Token> Types = new List<Token>(4) {
             Token.intt,
             Token.booleant,
             Token.voidt,
             Token.floatt
         };
 
-        public static List<Token> FactorTokens = new List<Token>()
-        {
+        public static List<Token> FactorTokens = new List<Token>() {
             Token.idt, Token.numt, Token.lparentt, Token.negateopt, Token.addopt,
             Token.truet, Token.falset
         };
@@ -78,23 +73,16 @@ namespace Compiler
 
         #region Intermediate Code Generator Resources
 
-        //public static int temporaryVariableCounter;
-        //public static string temporaryVariable;
-        //public static int temporaryVariableOffset;
         public static string code;
         public static Variable Tplace { get; set; }
         public static Variable Rplace { get; set; }
         public static Variable Eplace { get; set; }
         public static string BpOffsetNotation;
-        //public static int something;
-        //public static Stack<string> stack = new Stack<string>();
-        //public static Stack<string> tempVars = new Stack<string>();
 
         #endregion
 
         // Global enumerated date type that holds all of the tokens
-        public enum Token
-        {
+        public enum Token {
             finalt, classt, publict, statict, voidt, maint, Stringt, extendst, returnt, intt, floatt, booleant,
             ift, elset, whilet, printlnt, lengtht, truet, falset, thist, newt, addopt, mulopt, assignopt,
             relopt, lparentt, rparentt, lcurlyt, rcurlyt, lbrackt, rbrackt, commat, literalt, semit,

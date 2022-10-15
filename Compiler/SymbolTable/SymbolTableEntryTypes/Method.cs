@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using static Compiler.Resources;
 
-namespace Compiler
-{
-    class Method : ISymbolTableEntry
-    {
+namespace Compiler {
+    class Method : ISymbolTableEntry {
         public Token Token { get; set; }
         public string Lexeme { get; set; }
         public int Depth { get; set; }
@@ -16,10 +14,8 @@ namespace Compiler
         public List<DataType> ParameterType { get; set; } = new List<DataType>();
         public string OffsetNotation { get; set; }
 
-        public static implicit operator Method(SymbolTableEntry symbolTableEntry)
-        {
-            return new Method()
-            {
+        public static implicit operator Method(SymbolTableEntry symbolTableEntry) {
+            return new Method() {
                 Lexeme = symbolTableEntry.Lexeme,
                 Token = symbolTableEntry.Token,
                 Depth = symbolTableEntry.Depth,
